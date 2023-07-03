@@ -1,0 +1,57 @@
+# Lint & Prettier
+name: Lint & Prettier
+
+# push, PR 시 모든 브랜치에 대해 lint & prettier 검사 진행
+on:
+  - pull_request
+  
+# 인스턴스와 같은 환경에서 검사 진행
+jobs:
+  run-unit-test:
+    name: Code-Format
+    runs-on: ubuntu-22.04
+    
+    steps:
+      # 코드 불러오기
+      - uses: actions/checkout@v3
+      
+      # 노드 환경 구축
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          
+      # pnpm 환경 구축
+      - uses: pnpm/action-setup@v2
+        name: Install pnpm
+        id: pnpm-install
+        with:
+          version: 8
+          run_install: false
+          
+      # 의존성 캐싱  
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+      
+      # 캐시 사용 설정
+      - uses: actions/cache@v3
+        name: Setup pnpm cache
+        with:
+          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      # 의존성 설치
+      - name: Install dependencies
+        run: pnpm install
+              
+      # prettier 실행
+      - name: Run prettier
+        run: pnpm run prettier
+        
+      # lint 실행
+      - name: Run linters
+        run: pnpm run lint
