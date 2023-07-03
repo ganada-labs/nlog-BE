@@ -3,7 +3,6 @@ name: Unit Test
 
 # push, PR 시 모든 브랜치에 대해 유닛테스트 검사 진행
 on:
-  - push
   - pull_request
 # 인스턴스와 같은 환경에서 검사 진행
 jobs:
