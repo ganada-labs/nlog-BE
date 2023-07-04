@@ -9,7 +9,7 @@
     "start": "node index.js",
     "test": "vitest",
     "preview": "vite preview",
-    "prettier": "prettier --write .",
+    "prettier": "prettier --write ./src",
     "lint": "eslint src/**/*",
     "lint:fix": "pnpm run lint --fix"
   },
