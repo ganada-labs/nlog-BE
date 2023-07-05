@@ -28,3 +28,4 @@ dist-ssr
 
 # github
 .github/*
+node_modules
