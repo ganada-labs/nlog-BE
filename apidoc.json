@@ -1,0 +1,11 @@
+{
+  "name": "nlog API",
+  "version": "0.1.0",
+  "description": "nlog에 사용되는 API 모음",
+  "title": "Nlog API",
+  "template": {
+    "withCompare": true,
+    "withGenerator": true
+  },
+  "exclude": ["node_modules/", "dist/"]
+}

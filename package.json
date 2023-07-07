@@ -12,13 +12,15 @@
     "preview": "vite preview",
     "prettier": "prettier --write ./src",
     "lint": "eslint src/**/*",
-    "lint:fix": "pnpm run lint --fix"
+    "lint:fix": "pnpm run lint --fix",
+    "apidoc": "apidoc -i src -o docs/api"
   },
   "devDependencies": {
     "@types/koa": "^2.13.6",
     "@types/node": "^20.3.3",
     "@typescript-eslint/eslint-plugin": "^5.50.0",
     "@typescript-eslint/parser": "^5.60.1",
+    "apidoc": "^1.0.3",
     "eslint": "^8.44.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-prettier": "^8.8.0",
