@@ -13,7 +13,9 @@
     "prettier": "prettier --write ./src",
     "lint": "eslint src/**/*",
     "lint:fix": "pnpm run lint --fix",
-    "apidoc": "apidoc -i src -o docs/api"
+    "apidoc": "apidoc -i src -o docs/api",
+    "predeploy": "pnpm run apidoc",
+    "deploy": "gh-pages -d docs/api"
   },
   "devDependencies": {
     "@types/koa": "^2.13.6",
@@ -28,6 +30,7 @@
     "eslint-plugin-import": "^2.25.2",
     "eslint-plugin-n": "^15.0.0",
     "eslint-plugin-promise": "^6.0.0",
+    "gh-pages": "^5.0.0",
     "nodemon": "^2.0.22",
     "prettier": "^2.8.8",
     "ts-node": "^10.9.1",
