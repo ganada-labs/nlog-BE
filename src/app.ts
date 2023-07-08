@@ -1,5 +1,6 @@
 import Koa, { Context } from 'koa';
 import Router from '@koa/router';
+import Test from '@/models/test-model';
 
 export const app = new Koa();
 
@@ -19,6 +20,12 @@ const router = new Router();
  */
 router.get('/', async (ctx: Context) => {
   ctx.body = 'Hello World!';
+});
+
+router.get('/test', async (ctx: Context) => {
+  const isSuccess = await Test.create({ name: 'ABC' });
+
+  ctx.body = isSuccess ? 'success' : 'failed';
 });
 app.use(router.routes());
 app.use(router.allowedMethods());
