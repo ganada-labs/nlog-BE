@@ -1,6 +1,9 @@
 import Koa, { Context } from 'koa';
+import Router from '@koa/router';
 
 export const app = new Koa();
+
+const router = new Router();
 
 /**
  * @api {get} /user/:id Request User information
@@ -14,8 +17,10 @@ export const app = new Koa();
  * @apiSuccess {String} firstname Firstname of the User.
  * @apiSuccess {String} lastname  Lastname of the User.
  */
-app.use(async (ctx: Context) => {
+router.get('/', async (ctx: Context) => {
   ctx.body = 'Hello World!';
 });
+app.use(router.routes());
+app.use(router.allowedMethods());
 
 export default app;
