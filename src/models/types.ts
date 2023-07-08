@@ -1,6 +1,6 @@
 export interface CRUDable<T> {
-  create: (data: T) => void;
-  read: (query: Partial<T>) => T;
-  update: (query: Partial<T>, data: Partial<T>) => void;
-  remove: (query: Partial<T>) => void;
+  create: (data: T) => boolean | Promise<boolean>;
+  read: (query: Partial<T>) => T | Promise<T>;
+  update: (query: Partial<T>, data: Partial<T>) => boolean | Promise<boolean>;
+  remove: (query: Partial<T>) => boolean | Promise<boolean>;
 }
