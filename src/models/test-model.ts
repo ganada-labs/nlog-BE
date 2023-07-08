@@ -8,11 +8,14 @@ interface TestSchema {
 
 let isConnected = false;
 
-const connecter = mongoose
-  .connect(`mongodb://${ENV.MONGO_HOST}:${ENV.MONGO_PORT}/testdb`)
+mongoose
+  .connect(`mongodb://${ENV.MONGO_HOST}:${ENV.MONGO_PORT}/testdb`, {
+    serverSelectionTimeoutMS: 1000,
+  })
   .then(
     () => {
       isConnected = true;
+      console.warn('connected');
     },
     (err) => {
       console.error(err.message);
@@ -28,7 +31,6 @@ const TestModel = model<TestSchema>('Test', testSchema);
 const create = async (data: TestSchema) => {
   try {
     if (!isConnected) {
-      await connecter;
       throw Error('DB is not connected');
     }
     const alreadyExist = await TestModel.exists({ name: data.name });
