@@ -1,4 +1,5 @@
 import mongoose, { Schema, model } from 'mongoose';
+import { ENV } from '@/constants/index.ts';
 import { CRUDable } from './types.ts';
 
 interface TestSchema {
@@ -7,14 +8,16 @@ interface TestSchema {
 
 let isConnected = false;
 
-const connecter = mongoose.connect('mongodb://localhost:27017/test', {}).then(
-  () => {
-    isConnected = true;
-  },
-  (err) => {
-    console.error(err.message);
-  }
-);
+const connecter = mongoose
+  .connect(`mongodb://${ENV.MONGO_HOST}:${ENV.MONGO_PORT}/testdb`, {})
+  .then(
+    () => {
+      isConnected = true;
+    },
+    (err) => {
+      console.error(err.message);
+    }
+  );
 
 const testSchema = new Schema<TestSchema>({
   name: { type: String, required: true },
