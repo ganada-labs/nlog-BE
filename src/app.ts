@@ -18,11 +18,11 @@ const router = new Router();
  * @apiSuccess {String} firstname Firstname of the User.
  * @apiSuccess {String} lastname  Lastname of the User.
  */
-router.get('/', async (ctx: Context) => {
+router.get('/api', async (ctx: Context) => {
   ctx.body = 'Hello World!';
 });
 
-router.get('/test', async (ctx: Context) => {
+router.get('/api/test', async (ctx: Context) => {
   const isSuccess = await Test.create({ name: 'ABC' });
 
   ctx.body = isSuccess ? 'success' : 'failed';
