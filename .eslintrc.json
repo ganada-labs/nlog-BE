@@ -24,6 +24,7 @@
      */
     "no-unused-vars": "off",
     "@typescript-eslint/no-unused-vars": "error",
-    "no-console": ["error", { "allow": ["warn", "error"] }]
+    "no-console": ["error", { "allow": ["warn", "error"] }],
+    "comma-dangle": "off" // ,를 사용해 나열되는 요소들에 대해 마지막 요소에 ,가 붙지 않아도 됨
   }
 }
