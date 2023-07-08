@@ -9,7 +9,7 @@ interface TestSchema {
 let isConnected = false;
 
 const connecter = mongoose
-  .connect(`mongodb://${ENV.MONGO_HOST}:${ENV.MONGO_PORT}/testdb`, {})
+  .connect(`mongodb://${ENV.MONGO_HOST}:${ENV.MONGO_PORT}/testdb`)
   .then(
     () => {
       isConnected = true;
