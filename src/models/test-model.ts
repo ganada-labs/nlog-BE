@@ -51,7 +51,7 @@ const create = async (data: TestSchema) => {
 
 const read = async (
   query: Partial<TestSchema>,
-  select: Partial<TestSchema>
+  select?: Partial<TestSchema>
 ) => {
   try {
     const result = await TestModel.findOne(query, select);
