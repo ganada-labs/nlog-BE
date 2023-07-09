@@ -4,14 +4,39 @@
     "es2021": true,
     "node": true
   },
-  "extends": ["eslint:recommended", "prettier", "airbnb"],
+  "settings": {
+    "import/parsers": {
+      "@typescript-eslint/parser": [".ts", ".tsx"]
+    },
+    "import/resolver": {
+      "typescript": {
+        "project": "./tsconfig.json"
+      }
+    }
+  },
+  "extends": [
+    "eslint:recommended",
+    "prettier",
+    "airbnb",
+    "plugin:@typescript-eslint/recommended"
+  ],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "ecmaVersion": 2020,
     "sourceType": "module"
   },
+  "plugins": ["@typescript-eslint", "import"],
   "rules": {
     "import/extensions": ["off"], // import시 확장자 붙이는거 가지고 왈가왈부 하지 않음
-    "import/no-extraneous-dependencies": 0 // 테스트 또는 개발환경을 구성하는 파일에서는 devDependency 사용을 허용
+    "import/no-extraneous-dependencies": 0, // 테스트 또는 개발환경을 구성하는 파일에서는 devDependency 사용을 허용
+    /**
+     * 사용하지 않는 변수에 대해 에러를 발생시킴
+     * https://typescript-eslint.io/rules/no-unused-vars/
+     */
+    "no-unused-vars": "off",
+    "@typescript-eslint/no-unused-vars": "error",
+    "no-console": ["error", { "allow": ["warn", "error"] }],
+    "comma-dangle": "off", // ,를 사용해 나열되는 요소들에 대해 마지막 요소에 ,가 붙지 않아도 됨
+    "object-curly-newline": "off" // { , , , } 형태의 object를 여러줄로 개행하는 것을 허용함
   }
 }

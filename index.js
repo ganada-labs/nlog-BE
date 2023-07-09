@@ -1,5 +1,5 @@
-import { app } from './dist/app.js';
 import 'dotenv/config';
+import { app } from './dist/app.js';
 
 const { PORT } = process.env;
 
