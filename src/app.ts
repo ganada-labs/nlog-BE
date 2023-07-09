@@ -23,7 +23,21 @@ router.get('/api', async (ctx: Context) => {
 });
 
 router.get('/api/test', async (ctx: Context) => {
-  const isSuccess = await Test.create({ name: 'ABC' });
+  let isSuccess = false;
+  if (ctx.query.order === 'create') {
+    isSuccess = await Test.create({ name: 'ABC' });
+  }
+  if (ctx.query.order === 'read') {
+    const result = await Test.read({ name: 'ABC' });
+    ctx.body = result;
+    return;
+  }
+  if (ctx.query.order === 'update') {
+    isSuccess = await Test.update({ name: 'ABC' }, { name: 'CBA' });
+  }
+  if (ctx.query.order === 'remove') {
+    isSuccess = await Test.remove({ name: 'ABC' });
+  }
 
   ctx.body = isSuccess ? 'success' : 'failed';
 });
