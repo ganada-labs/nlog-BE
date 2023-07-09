@@ -1,6 +1,6 @@
 import mongoose, { Schema, model } from 'mongoose';
 import { ENV } from '@/constants/index.ts';
-import { CRUDable } from './types.ts';
+import type { CRUDable, Create, Read, Update, Remove } from './types.ts';
 
 interface TestSchema {
   name: string;
@@ -27,7 +27,7 @@ const testSchema = new Schema<TestSchema>({
 
 const TestModel = model<TestSchema>('Test', testSchema);
 
-const create = async (data: TestSchema) => {
+const create: Create<TestSchema> = async (data: TestSchema) => {
   try {
     if (!isConnected) {
       throw Error('DB is not connected');
@@ -49,7 +49,7 @@ const create = async (data: TestSchema) => {
   }
 };
 
-const read = async (
+const read: Read<TestSchema> = async (
   query: Partial<TestSchema>,
   select?: Partial<TestSchema>
 ) => {
@@ -65,7 +65,7 @@ const read = async (
   }
 };
 
-const update = async (
+const update: Update<TestSchema> = async (
   query: Partial<TestSchema>,
   data: Partial<TestSchema>
 ) => {
@@ -81,7 +81,7 @@ const update = async (
   }
 };
 
-const remove = async (query: Partial<TestSchema>) => {
+const remove: Remove<TestSchema> = async (query: Partial<TestSchema>) => {
   try {
     await TestModel.deleteOne(query);
 
