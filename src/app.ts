@@ -23,7 +23,6 @@ router.get('/api', async (ctx: Context) => {
 });
 
 router.get('/api/test', async (ctx: Context) => {
-  console.warn(ctx.query);
   const isSuccess = await Test.create({ name: 'ABC' });
 
   ctx.body = isSuccess ? 'success' : 'failed';
