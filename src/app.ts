@@ -22,6 +22,18 @@ router.get('/api', async (ctx: Context) => {
   ctx.body = 'Hello World!';
 });
 
+/**
+ * @api {get} /api/test test용 API
+ *
+ * @apiVersion 0.1.0
+ * @apiName Test
+ * @apiDescription MongoDB 테스트용 명령어들을 실행할 수 있는 API
+ *
+ * @apiParam {String="create","read","update","remove"} order 명령어
+ *
+ * @apiSuccess (200) {String} create,update,remove -> success 문자열 반환
+ * @apiSuccess (200) {String} read -> db 요소를 읽은 값을 반환함
+ */
 router.get('/api/test', async (ctx: Context) => {
   let isSuccess = false;
   if (ctx.query.order === 'create') {
@@ -41,6 +53,7 @@ router.get('/api/test', async (ctx: Context) => {
 
   ctx.body = isSuccess ? 'success' : 'failed';
 });
+
 app.use(router.routes());
 app.use(router.allowedMethods());
 
