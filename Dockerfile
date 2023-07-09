@@ -10,8 +10,6 @@ WORKDIR /app
 # 현재 디렉토리의 내용을 복사함
 COPY . .
 
-# 환경변수 설정
-RUN export $(cat .env | xargs)
 # 실행
 RUN pnpm i
 RUN pnpm run build
