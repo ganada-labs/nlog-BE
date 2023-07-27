@@ -17,3 +17,5 @@ auth.post('/test', async (ctx: Context) => {
 
   ctx.status = 200;
 });
+
+export default auth;
