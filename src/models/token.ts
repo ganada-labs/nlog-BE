@@ -11,14 +11,16 @@ let isConnected = false;
 const client = createClient({
   url: `redis://${ENV.REDIS_HOST}:${ENV.REDIS_PORT}`,
 });
-client.on('connect', () => {
-  isConnected = true;
-  console.info('Redis Connected!');
-});
-client.on('error', (err) => {
-  console.error('Redis Error', err);
-});
-client.connect().then();
+
+client.connect().then(
+  () => {
+    isConnected = true;
+    console.info('Redis Connected!');
+  },
+  (err) => {
+    console.error('Redis Error', err);
+  }
+);
 
 const set = async (data: TokenSchema) => {
   try {
