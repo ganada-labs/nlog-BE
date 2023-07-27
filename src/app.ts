@@ -1,10 +1,8 @@
-import dotenv from 'dotenv';
+import 'dotenv/config';
 import Koa, { Context } from 'koa';
 import Router from '@koa/router';
 import Test from '@/models/test-model';
 import Auth from '@/router/auth';
-
-dotenv.config();
 
 export const app = new Koa();
 
