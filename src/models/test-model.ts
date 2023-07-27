@@ -8,7 +8,7 @@ interface TestSchema {
 let isConnected = false;
 
 mongoose
-  .connect('mongodb://mongoservice:27017/testdb', {
+  .connect('mongodb://host.docker.internal:27017/testdb', {
     serverSelectionTimeoutMS: 1000,
   })
   .then(
