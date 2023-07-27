@@ -1,6 +1,7 @@
 import Koa, { Context } from 'koa';
 import Router from '@koa/router';
 import Test from '@/models/test-model';
+import Auth from '@/router/auth';
 
 export const app = new Koa();
 
@@ -55,6 +56,7 @@ router.get('/api/test', async (ctx: Context) => {
 });
 
 app.use(router.routes());
+app.use(Auth.routes());
 app.use(router.allowedMethods());
 
 export default app;
