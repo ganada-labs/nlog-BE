@@ -14,6 +14,7 @@ mongoose
   .then(
     () => {
       isConnected = true;
+      console.info('Mongo Connected!');
     },
     (err) => {
       console.error(err.message);
