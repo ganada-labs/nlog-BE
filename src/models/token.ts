@@ -1,4 +1,3 @@
-import { ENV } from '@/constants/index.ts';
 import { createClient } from 'redis';
 
 interface TokenSchema {
@@ -9,7 +8,7 @@ interface TokenSchema {
 let isConnected = false;
 
 const client = createClient({
-  url: `redis://${ENV.REDIS_HOST}:${ENV.REDIS_PORT}`,
+  url: 'redis://redisservice:6379',
 });
 
 client.connect().then(

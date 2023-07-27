@@ -1,5 +1,4 @@
 import mongoose, { Schema, model } from 'mongoose';
-import { ENV } from '@/constants/index.ts';
 import type { CRUDable, Create, Read, Update, Remove } from './types.ts';
 
 interface TestSchema {
@@ -9,7 +8,7 @@ interface TestSchema {
 let isConnected = false;
 
 mongoose
-  .connect(`mongodb://${ENV.MONGO_HOST}:${ENV.MONGO_PORT}/testdb`, {
+  .connect('mongodb://mongoservice:27017/testdb', {
     serverSelectionTimeoutMS: 1000,
   })
   .then(
