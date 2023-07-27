@@ -1,4 +1,4 @@
-// import { ENV } from '@/constants/index.ts';
+import { ENV } from '@/constants/index.ts';
 import { createClient } from 'redis';
 
 interface TokenSchema {
@@ -8,7 +8,9 @@ interface TokenSchema {
 
 let isConnected = false;
 
-const client = createClient({});
+const client = createClient({
+  url: `redis://${ENV.REDIS_HOST}:${ENV.REDIS_PORT}`,
+});
 client.on('connect', () => {
   isConnected = true;
   console.info('Redis Connected!');
