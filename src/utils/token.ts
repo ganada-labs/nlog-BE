@@ -1,4 +1,5 @@
-import jwt from 'jsonwebtoken';
+import jwt, { JsonWebTokenError } from 'jsonwebtoken';
+import * as type from '@/utils/types';
 
 export const ACCESS_TOKEN_EXPIRES_IN = '3600s';
 export const REFRESH_TOKEN_EXPIRES_IN = '14d';
@@ -38,4 +39,22 @@ export const genAccessToken = (payload: TokenPayload) => {
   return genToken(payload, options);
 };
 
-export const verify = (token: string) => jwt.verify(token, JWT_SECRET);
+export const verify = (token: string) => {
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET, { ignoreExpiration: true });
+
+    if (type.isString(decoded)) {
+      throw Error('검증에 실패함');
+    }
+
+    return decoded;
+  } catch (err) {
+    if (err instanceof JsonWebTokenError) {
+      return err.message;
+    }
+    if (err instanceof Error) {
+      return err.message;
+    }
+    return '토큰에서 알 수 없는 에러 발생';
+  }
+};
