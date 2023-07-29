@@ -3,15 +3,6 @@ import Router from '@koa/router';
 import TokenModel from '@/models/token';
 import { isEmail, isNil, type, token } from '@/utils';
 
-const getBearerCredential = (authorization: string | undefined) => {
-  if (isNil(authorization)) return '';
-
-  const [scheme, credential] = authorization.split(' ');
-
-  if (scheme !== 'Bearer') return '';
-  return credential;
-};
-
 const auth = new Router({ prefix: '/api/auth' });
 
 /**
@@ -58,7 +49,7 @@ auth.get('/login/google', async (ctx: Context) => {
  * }
  */
 auth.get('/refresh', async (ctx: Context) => {
-  const prevToken = getBearerCredential(ctx.header.authorization);
+  const prevToken = token.getBearerCredential(ctx.header.authorization);
   if (prevToken === '') {
     ctx.throw(401, '토큰이 없음');
   }
