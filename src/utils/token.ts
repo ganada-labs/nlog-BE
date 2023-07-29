@@ -1,4 +1,4 @@
-import jwt, { JsonWebTokenError } from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
 import * as type from '@/utils/types';
 
 export const ACCESS_TOKEN_EXPIRES_IN = '3600s';
@@ -54,9 +54,6 @@ export const verify = (token: string) => {
 
     return decoded;
   } catch (err) {
-    if (err instanceof JsonWebTokenError) {
-      return err.message;
-    }
     if (err instanceof Error) {
       return err.message;
     }
