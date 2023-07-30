@@ -30,6 +30,11 @@ auth.get('/login/google', async (ctx: Context) => {
   const refreshToken = token.genRefreshToken(payload);
   await TokenModel.set(payload, refreshToken);
 
+  /**
+   * 로그인시 쿠키에 access token을 포함해 전달한다.
+   * 클라이언트는 SSR에 화면 요청마다 쿠키를 전송하게 된다.
+   * SSR에서 BE로 데이터 요청을 보낼 땐 SSR에서 header에 토큰을 넣어 보낸다.
+   */
   ctx.status = 200;
 });
 /**
