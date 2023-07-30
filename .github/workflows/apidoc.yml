@@ -54,8 +54,10 @@ jobs:
         run: pnpm run apidoc
 
       # 문서 배포
-      - name: Deploy Docs
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./docs/api
+#       - name: Deploy Docs
+#         uses: peaceiris/actions-gh-pages@v3
+#         with:
+#           github_token: ${{ secrets.GITHUB_TOKEN }}
+#           publish_dir: ./docs/api
+      - name: Deploy
+        run: pnpm run deploy
