@@ -29,6 +29,7 @@ router.get('/api', async (ctx: Context) => {
  *
  * @apiVersion 0.1.0
  * @apiName Test
+ * @apiGroup Test
  * @apiDescription MongoDB 테스트용 명령어들을 실행할 수 있는 API
  *
  * @apiParam {String="create","read","update","remove"} order 명령어

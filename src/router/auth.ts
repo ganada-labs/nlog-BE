@@ -38,11 +38,12 @@ auth.get('/login/google', async (ctx: Context) => {
   ctx.status = 200;
 });
 /**
- * @api {get} /api/auth/refresh
+ * @api {get} /api/auth/refresh 토큰 갱신
+ * @apiDescription 토큰 만료시 토큰을 재발급할 수 있는 API
  *
  * @apiVersion 0.1.0
  * @apiName refresh
- * @apiDescription 토큰 만료시 토큰을 재발급할 수 있는 API
+ * @apiGroup Auth
  * @apiHeader {String} authorization Bearer 토큰 스트링
  * @apiSuccess {String} Scheme 인증 방식을 알려주는 스킴
  * @apiSuccess {String} Token 사용된 토큰 문자열
