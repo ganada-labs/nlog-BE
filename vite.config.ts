@@ -3,6 +3,7 @@ import { VitePluginNode } from 'vite-plugin-node';
 import { fileURLToPath } from 'url';
 
 export default defineConfig({
+  cacheDir: './',
   server: {
     port: 3000,
   },

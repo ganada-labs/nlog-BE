@@ -1,9 +1,15 @@
 import { createClient } from 'redis';
 
+type Token = string;
+
 interface TokenSchema {
-  id: string;
-  value: string;
+  email: string;
+  token: Token;
 }
+
+export type TokenQuery = Omit<TokenSchema, 'token'>;
+
+const createKey = (query: TokenQuery) => `${query.email}`;
 
 let isConnected = false;
 
@@ -21,13 +27,15 @@ client.connect().then(
   }
 );
 
-const set = async (data: TokenSchema) => {
+const set = async (query: TokenQuery, value: Token) => {
   try {
     if (!isConnected) {
       throw Error('DB is not connected');
     }
 
-    await client.set(data.id, data.value);
+    const key = createKey(query);
+    await client.set(key, value);
+
     return true;
   } catch (err: unknown) {
     if (err instanceof Error) {
@@ -37,12 +45,14 @@ const set = async (data: TokenSchema) => {
   }
 };
 
-const get = async (query: { id: TokenSchema['id'] }) => {
+const get = async (query: TokenQuery) => {
   try {
     if (!isConnected) {
       throw Error('DB is not connected');
     }
-    const result = await client.get(query.id);
+
+    const key = createKey(query);
+    const result = await client.get(key);
 
     return result;
   } catch (err: unknown) {
