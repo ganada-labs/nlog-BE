@@ -38,7 +38,7 @@ auth.get('/login/google', async (ctx: Context) => {
   ctx.status = 200;
 });
 /**
- * @api {get} /api/auth/refresh 토큰 갱신
+ * @api {get} /api/auth/refresh Refresh
  * @apiDescription 토큰 만료시 토큰을 재발급할 수 있는 API
  *
  * @apiVersion 0.1.0
