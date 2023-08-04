@@ -9,5 +9,5 @@
   },
   "exclude": ["node_modules/", "dist/"],
 
-  "url": "https://api.new-blog.store/"
+  "url": "https://api.new-blog.store"
 }
