@@ -3,10 +3,10 @@ import Router from '@koa/router';
 import TokenModel from '@/models/token';
 import { isEmail, isNil, type, token } from '@/utils';
 
-const auth = new Router({ prefix: '/api/auth' });
+const auth = new Router({ prefix: '/auth' });
 
 /**
- * @api {get} /api/login/google
+ * @api {get} /login/google
  *
  * @apiVersion 0.1.0
  * @apiName google-login
@@ -38,7 +38,7 @@ auth.get('/login/google', async (ctx: Context) => {
   ctx.status = 200;
 });
 /**
- * @api {get} /api/auth/refresh Refresh
+ * @api {get} /auth/refresh Refresh
  * @apiDescription 토큰 만료시 토큰을 재발급할 수 있는 API
  *
  * @apiVersion 0.1.0

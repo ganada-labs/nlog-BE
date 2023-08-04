@@ -20,12 +20,12 @@ const router = new Router();
  * @apiSuccess {String} firstname Firstname of the User.
  * @apiSuccess {String} lastname  Lastname of the User.
  */
-router.get('/api', async (ctx: Context) => {
+router.get('/', async (ctx: Context) => {
   ctx.body = 'Hello World!';
 });
 
 /**
- * @api {get} /api/test test용 API
+ * @api {get} /test test용 API
  *
  * @apiVersion 0.1.0
  * @apiName Test
@@ -37,7 +37,7 @@ router.get('/api', async (ctx: Context) => {
  * @apiSuccess (200) {String} create,update,remove -> success 문자열 반환
  * @apiSuccess (200) {String} read -> db 요소를 읽은 값을 반환함
  */
-router.get('/api/test', async (ctx: Context) => {
+router.get('/test', async (ctx: Context) => {
   let isSuccess = false;
   if (ctx.query.order === 'create') {
     isSuccess = await Test.create({ name: 'ABC' });
