@@ -9,12 +9,15 @@ interface TokenSchema {
 
 export type TokenQuery = Omit<TokenSchema, 'token'>;
 
-const createKey = (query: TokenQuery) => `${query.email}`;
+const REDIS_HOST = import.meta.env.VITE_REDIS_HOST ?? 'localhost';
+const REDIS_PORT = import.meta.env.VITE_REDIS_PORT ?? '6379';
+const REDIS_URL = `redis://${REDIS_HOST}:${REDIS_PORT}`;
 
+const createKey = (query: TokenQuery) => `${query.email}`;
 let isConnected = false;
 
 const client = createClient({
-  url: 'redis://host.docker.internal:6379',
+  url: REDIS_URL,
 });
 
 client.connect().then(

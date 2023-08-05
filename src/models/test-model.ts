@@ -5,10 +5,14 @@ interface TestSchema {
   name: string;
 }
 
+const MONGO_HOST = import.meta.env.VITE_MONGO_HOST ?? 'localhost';
+const MONGO_PORT = import.meta.env.VITE_MONGO_PORT ?? '27019';
+const MONGO_URL = `mongodb://${MONGO_HOST}:${MONGO_PORT}/testdb`;
+
 let isConnected = false;
 
 mongoose
-  .connect('mongodb://host.docker.internal:27017/testdb', {
+  .connect(MONGO_URL, {
     serverSelectionTimeoutMS: 1000,
   })
   .then(
