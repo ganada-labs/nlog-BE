@@ -30,26 +30,27 @@ GoogleAuth.get(
     failureRedirect: '/callback/failure',
   }),
   async (ctx) => {
-    const { user } = ctx.state;
+    const { user, provider } = ctx.state;
     const userEmail = user.emails.find((email: Email) => email.verified)?.value;
 
     if (!isEmail(userEmail)) {
-      ctx.redirect(`${OAUTH_REDIRECT_URL}?status=failed`);
+      ctx.redirect(
+        `${OAUTH_REDIRECT_URL}?status=failed&message='invalid email'`
+      );
       return;
     }
 
-    const accessToken = token.genAccessToken({
+    const { accessToken, refreshToken } = token.genTokens({
       email: userEmail,
-    });
-
-    const refreshToken = token.genRefreshToken({
-      email: userEmail,
+      provider,
     });
 
     const success = await Auth.set({ email: userEmail }, refreshToken);
 
     if (!success) {
-      ctx.redirect(`${OAUTH_REDIRECT_URL}?status=failed`);
+      ctx.redirect(
+        `${OAUTH_REDIRECT_URL}?status=failed&message='failed to save user session'`
+      );
       return;
     }
 
@@ -59,7 +60,9 @@ GoogleAuth.get(
 );
 
 GoogleAuth.get('/callback/failure', (ctx) => {
-  ctx.redirect(`${OAUTH_REDIRECT_URL}?status=failed`);
+  ctx.redirect(
+    `${OAUTH_REDIRECT_URL}?status=failed&message='oauth request failed'`
+  );
 });
 
 export default GoogleAuth;
