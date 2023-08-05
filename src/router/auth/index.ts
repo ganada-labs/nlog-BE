@@ -11,7 +11,8 @@ const auth = new Router({ prefix: '/auth' });
  *
  * @apiVersion 0.1.0
  * @apiName google-login
- * @apiGroup Auth
+ * @apiGroup Auth *
+ * @apiSuccessExample {json} 성공 예제:
  */
 auth.use('/google', GoogleAuth.routes());
 
@@ -23,14 +24,6 @@ auth.use('/google', GoogleAuth.routes());
  * @apiName refresh
  * @apiGroup Auth
  * @apiHeader {String} authorization Bearer 토큰 스트링
- * @apiSuccess {String} Scheme 인증 방식을 알려주는 스킴
- * @apiSuccess {String} Token 사용된 토큰 문자열
- * @apiSuccessExample {json} 성공 예제:
- * HTTP/1.1 200 OK
- * {
- *    "scheme": "Bearer",
- *    "token": "tokenstring"
- * }
  */
 auth.get('/refresh', async (ctx: Context) => {
   const prevToken = token.getBearerCredential(ctx.header.authorization);
