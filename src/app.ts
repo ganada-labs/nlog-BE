@@ -36,8 +36,7 @@ router.get('/', async (ctx: Context) => {
  *
  * @apiParam {String="create","read","update","remove"} order 명령어
  *
- * @apiSuccess (200) {String} create,update,remove -> success 문자열 반환
- * @apiSuccess (200) {String} read -> db 요소를 읽은 값을 반환함
+ * @apiSuccess (200) {String} result create,update,remove -> success 문자열 반환, read -> db 값을 반환함
  */
 router.get('/test', async (ctx: Context) => {
   let isSuccess = false;

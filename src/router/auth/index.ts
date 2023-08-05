@@ -12,7 +12,6 @@ const auth = new Router({ prefix: '/auth' });
  * @apiVersion 0.1.0
  * @apiName google-login
  * @apiGroup Auth *
- * @apiSuccessExample {json} 성공 예제:
  */
 auth.use('/google', GoogleAuth.routes());
 
