@@ -38,6 +38,19 @@ export const genAccessToken = (payload: TokenPayload) => {
 
   return genToken(payload, options);
 };
+
+/**
+ * 엑세스 토큰과 리프레시 토큰을 생성해 반환한다.
+ *
+ * @param payload 토큰 페이로드
+ * @returns Access Token
+ */
+export const genTokens = (payload: TokenPayload) => {
+  const accessToken = genAccessToken(payload);
+  const refreshToken = genRefreshToken(payload);
+
+  return { accessToken, refreshToken };
+};
 /**
  * 토큰을 검증한다.
  *

@@ -1,8 +1,10 @@
-import 'dotenv/config';
 import Koa, { Context } from 'koa';
 import Router from '@koa/router';
 import Test from '@/models/test-model';
 import Auth from '@/router/auth';
+import googleStrategy from '@/strategies/google';
+import localStrategy from '@/strategies/local';
+import passport from 'koa-passport';
 
 export const app = new Koa();
 
@@ -56,6 +58,12 @@ router.get('/test', async (ctx: Context) => {
 
   ctx.body = isSuccess ? 'success' : 'failed';
 });
+/**
+ * passport 등록
+ */
+passport.use(googleStrategy.name, googleStrategy);
+passport.use('local', localStrategy);
+app.use(passport.initialize());
 
 app.use(router.routes());
 app.use(Auth.routes());
