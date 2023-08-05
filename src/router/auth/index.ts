@@ -1,10 +1,12 @@
 import { type Context } from 'koa';
 import Router from '@koa/router';
-import TokenModel from '@/models/token';
+import TokenModel from '@/models/auth';
 import { isEmail, isNil, type, token } from '@/utils';
+import GoogleAuth from './google';
 
 const auth = new Router({ prefix: '/auth' });
 
+auth.use('/google', GoogleAuth.routes());
 /**
  * @api {get} /login/google
  *
@@ -14,7 +16,6 @@ const auth = new Router({ prefix: '/auth' });
  */
 auth.get('/login/google', async (ctx: Context) => {
   /**
-   * TODO: OAuth 과정을 거치도록 수정한다.
    * TODO: 실제 유저 정보를 받을 수 있게 수정한다.
    */
   const email = 'nlog@gmail.com';
