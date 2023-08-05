@@ -11,7 +11,7 @@ const auth = new Router({ prefix: '/auth' });
  *
  * @apiVersion 0.1.0
  * @apiName google-login
- * @apiGroup Auth *
+ * @apiGroup Auth
  */
 auth.use('/google', GoogleAuth.routes());
 
