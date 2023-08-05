@@ -66,9 +66,7 @@ const get = async (query: TokenQuery) => {
   }
 };
 
-const Token = {
+export default {
   set,
   get,
 };
-
-export default Token;
