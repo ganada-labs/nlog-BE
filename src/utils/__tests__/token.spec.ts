@@ -50,6 +50,24 @@ describe('token', () => {
     expect(isString(decoded) ? false : decoded.id).toBe(content.id);
   });
 
+  it('리프레시 토큰과 액세스 토큰을 동시에 만들 수 있다', () => {
+    const { content } = setup();
+
+    const { refreshToken, accessToken } = token.genTokens(content);
+
+    expect(() => token.verify(refreshToken)).not.toThrowError();
+    expect(() => token.verify(accessToken)).not.toThrowError();
+
+    const refreshTokenDecoded = token.verify(refreshToken);
+    const accessTokenDecoded = token.verify(refreshToken);
+    expect(isString(refreshTokenDecoded) ? false : refreshTokenDecoded.id).toBe(
+      content.id
+    );
+    expect(isString(accessTokenDecoded) ? false : accessTokenDecoded.id).toBe(
+      content.id
+    );
+  });
+
   it('authorization 헤더에서 토큰을 꺼내 반환할 수 있다.', () => {
     const credential1 = token.getBearerCredential('Bearer abc');
     const credential2 = token.getBearerCredential('B abc');
