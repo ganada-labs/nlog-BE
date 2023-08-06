@@ -12,9 +12,6 @@ const strategy = new GoogleStrategy(
   },
   async (_, __, profile, done) => {
     try {
-      /**
-       * TODO: User 확인 후 계정 생성
-       */
       return done(null, profile);
     } catch (err) {
       return done(null, false, { message: 'create user failed' });

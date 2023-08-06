@@ -1,15 +1,40 @@
 import Router from '@koa/router';
 import passport from 'koa-passport';
-import Auth from '@/models/auth';
+import AuthModel from '@/models/auth';
+import UserModel, { type UserSchema } from '@/models/user';
 import { isEmail, token } from '@/utils';
 
-type Email = {
-  value: `${string}@${string}.${string}`;
-  verified: boolean;
+type UserRaw = {
+  displayName: string;
+  emails: {
+    value: string;
+    verified: boolean;
+  }[];
+  provider: string;
 };
 
 const OAUTH_REDIRECT_URL = import.meta.env.VITE_OAUTH_REDIRECT_URL;
 const DOMAIN = import.meta.env.VITE_DOMAIN;
+
+const normalizeUser = (raw: UserRaw) => {
+  const userName = raw.displayName ?? '???';
+  const userEmail = raw.emails.find((email) => email.verified)?.value;
+  const { provider } = raw;
+
+  return {
+    userName,
+    userEmail,
+    provider,
+  };
+};
+
+const isNotSigned = async (email: string) => !(await UserModel.read({ email }));
+
+const signup = ({ email, name }: UserSchema) =>
+  UserModel.create({ email, name });
+
+const saveRefreshToken = (email: string, tokenStr: string) =>
+  AuthModel.set({ email }, tokenStr);
 
 const GoogleAuth = new Router();
 
@@ -30,14 +55,16 @@ GoogleAuth.get(
     failureRedirect: '/callback/failure',
   }),
   async (ctx) => {
-    const { user, provider } = ctx.state;
-    const userEmail = user.emails.find((email: Email) => email.verified)?.value;
+    const { userEmail, userName, provider } = normalizeUser(ctx.state.user);
 
     if (!isEmail(userEmail)) {
-      ctx.redirect(
-        `${OAUTH_REDIRECT_URL}?status=failed&message='invalid email'`
-      );
+      const message = 'invalid email';
+      ctx.redirect(`${OAUTH_REDIRECT_URL}?status=failed&message='${message}'`);
       return;
+    }
+
+    if (await isNotSigned(userEmail)) {
+      await signup({ email: userEmail, name: userName });
     }
 
     const { accessToken, refreshToken } = token.genTokens({
@@ -45,12 +72,11 @@ GoogleAuth.get(
       provider,
     });
 
-    const success = await Auth.set({ email: userEmail }, refreshToken);
+    const success = await saveRefreshToken(userEmail, refreshToken);
 
     if (!success) {
-      ctx.redirect(
-        `${OAUTH_REDIRECT_URL}?status=failed&message='failed to save user session'`
-      );
+      const message = 'failed to save user session';
+      ctx.redirect(`${OAUTH_REDIRECT_URL}?status=failed&message='${message}'`);
       return;
     }
 
@@ -60,9 +86,8 @@ GoogleAuth.get(
 );
 
 GoogleAuth.get('/callback/failure', (ctx) => {
-  ctx.redirect(
-    `${OAUTH_REDIRECT_URL}?status=failed&message='oauth request failed'`
-  );
+  const message = 'oauth request failed';
+  ctx.redirect(`${OAUTH_REDIRECT_URL}?status=failed&message='${message}'`);
 });
 
 export default GoogleAuth;
