@@ -1,7 +1,7 @@
 import { Schema, model } from '@/repositories/mongodb';
 import type { CRUDable, Create, Read, Update, Remove } from './types.ts';
 
-interface UserSchema {
+export interface UserSchema {
   email: string;
   name: string;
 }

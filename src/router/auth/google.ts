@@ -1,17 +1,15 @@
 import Router from '@koa/router';
 import passport from 'koa-passport';
 import AuthModel from '@/models/auth';
-import UserModel from '@/models/user';
+import UserModel, { type UserSchema } from '@/models/user';
 import { isEmail, token } from '@/utils';
-
-type Email = {
-  value: `${string}@${string}.${string}`;
-  verified: boolean;
-};
 
 type UserRaw = {
   displayName: string;
-  emails: Email[];
+  emails: {
+    value: string;
+    verified: boolean;
+  }[];
   provider: string;
 };
 
@@ -20,7 +18,7 @@ const DOMAIN = import.meta.env.VITE_DOMAIN;
 
 const normalizeUser = (raw: UserRaw) => {
   const userName = raw.displayName ?? '???';
-  const userEmail = raw.emails.find((email: Email) => email.verified)?.value;
+  const userEmail = raw.emails.find((email) => email.verified)?.value;
   const { provider } = raw;
 
   return {
@@ -31,9 +29,11 @@ const normalizeUser = (raw: UserRaw) => {
 };
 
 const isNotSigned = async (email: string) => !(await UserModel.read({ email }));
-const signup = async ({ email, name }: { email: string; name: string }) =>
+
+const signup = ({ email, name }: UserSchema) =>
   UserModel.create({ email, name });
-const saveRefreshToken = async (email: string, tokenStr: string) =>
+
+const saveRefreshToken = (email: string, tokenStr: string) =>
   AuthModel.set({ email }, tokenStr);
 
 const GoogleAuth = new Router();
