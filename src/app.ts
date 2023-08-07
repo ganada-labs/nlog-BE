@@ -1,12 +1,15 @@
 import Koa, { Context } from 'koa';
 import Router from '@koa/router';
 import Auth from '@/router/auth';
+import User from '@/router/user';
 import googleStrategy from '@/strategies/google';
 import localStrategy from '@/strategies/local';
 import passport from 'koa-passport';
 import * as mongodb from '@/repositories/mongodb';
+import * as redis from '@/repositories/redis';
 
 mongodb.connect();
+redis.connect();
 
 export const app = new Koa();
 
@@ -36,6 +39,7 @@ app.use(passport.initialize());
 
 app.use(router.routes());
 app.use(Auth.routes());
+app.use(User.routes());
 app.use(router.allowedMethods());
 
 export default app;

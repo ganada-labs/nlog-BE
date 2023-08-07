@@ -3,7 +3,7 @@ import * as type from '@/utils/types';
 
 export const ACCESS_TOKEN_EXPIRES_IN = '3600s';
 export const REFRESH_TOKEN_EXPIRES_IN = '14d';
-const JWT_SECRET: jwt.Secret = process.env.JWT_SECRET ?? 'boostcamphimdura';
+const JWT_SECRET: jwt.Secret = import.meta.env.VITE_JWT_SECRET ?? 'my_secret';
 
 export type TokenPayload = string | object | Buffer;
 export type TokenDecoded = string | jwt.Jwt | jwt.JwtPayload;
