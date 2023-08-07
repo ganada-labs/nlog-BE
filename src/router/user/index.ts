@@ -17,7 +17,6 @@ user.delete(
   '/',
   passport.authenticate('local', { session: false }),
   async (ctx: Context) => {
-    console.log(ctx.state.user, ctx.state);
     const { email } = ctx.state.user;
 
     await UserModel.remove({ email });
