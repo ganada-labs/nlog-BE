@@ -6,8 +6,10 @@ import googleStrategy from '@/strategies/google';
 import localStrategy from '@/strategies/local';
 import passport from 'koa-passport';
 import * as mongodb from '@/repositories/mongodb';
+import * as redis from '@/repositories/redis';
 
 mongodb.connect();
+redis.connect();
 
 export const app = new Koa();
 

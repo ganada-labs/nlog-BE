@@ -1,4 +1,4 @@
-import { createClient } from 'redis';
+import { client } from '@/repositories/redis';
 
 type Token = string;
 
@@ -9,24 +9,7 @@ interface TokenSchema {
 
 export type TokenQuery = Omit<TokenSchema, 'token'>;
 
-const REDIS_HOST = import.meta.env.VITE_REDIS_HOST ?? 'localhost';
-const REDIS_PORT = import.meta.env.VITE_REDIS_PORT ?? '6379';
-const REDIS_URL = `redis://${REDIS_HOST}:${REDIS_PORT}`;
-
 const createKey = (query: TokenQuery) => `${query.email}`;
-
-const client = createClient({
-  url: REDIS_URL,
-});
-
-client.connect().then(
-  () => {
-    console.info('Redis Connected!');
-  },
-  (err) => {
-    console.error('Redis Error', err);
-  }
-);
 
 const set = async (query: TokenQuery, value: Token) => {
   try {
