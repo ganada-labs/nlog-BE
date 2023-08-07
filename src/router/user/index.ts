@@ -2,7 +2,7 @@ import { type Context } from 'koa';
 import Router from '@koa/router';
 import UserModel from '@/models/user';
 import AuthModel from '@/models/auth';
-import { isNil, type, token } from '@/utils';
+import passport from 'koa-passport';
 
 const user = new Router({ prefix: '/user' });
 /**
@@ -13,32 +13,19 @@ const user = new Router({ prefix: '/user' });
  * @apiGroup User
  * @apiHeader {String} authorization Bearer 토큰 스트링
  */
-user.delete('/', async (ctx: Context) => {
-  const prevToken = token.getBearerCredential(ctx.header.authorization);
-  if (prevToken === '') {
-    ctx.throw(401, '토큰이 없음');
+user.delete(
+  '/',
+  passport.authenticate('local', { session: false }),
+  async (ctx: Context) => {
+    console.log(ctx.state.user, ctx.state);
+    const { email } = ctx.state.user;
+
+    await UserModel.remove({ email });
+    await AuthModel.remove({ email });
+    ctx.cookies.set('token', null, { expires: new Date(0) });
+
+    ctx.status = 204;
   }
-
-  const decoded = token.verify(prevToken);
-  if (type.isString(decoded)) {
-    ctx.throw(401, `토큰이 잘못됨: ${decoded}`);
-  }
-
-  const { email, provider } = decoded;
-  if (isNil(email) || isNil(provider)) {
-    ctx.throw(401, '토큰에 필요한 정보가 포함되지 않음');
-  }
-
-  const userData = await UserModel.read({ email });
-  if (isNil(userData)) {
-    ctx.throw(400, '없는 계정임');
-  }
-
-  await UserModel.remove({ email });
-  await AuthModel.remove({ email });
-  ctx.cookies.set('token', null, { expires: new Date(0) });
-
-  ctx.status = 204;
-});
+);
 
 export default user;

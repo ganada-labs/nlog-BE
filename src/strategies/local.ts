@@ -1,24 +1,39 @@
-import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt';
+import {
+  Strategy as JwtStrategy,
+  ExtractJwt,
+  StrategyOptions,
+  VerifyCallback,
+} from 'passport-jwt';
+import UserModel from '@/models/user';
+import { isNil } from '@/utils';
 
 const JWT_SECRET = import.meta.env.VITE_JWT_SECRET;
 
-const options = {
+const option = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
   secretOrKey: JWT_SECRET,
-  session: false,
-};
+} satisfies StrategyOptions;
 
-/**
- * TODO: 더 자세한 로컬 인증 전략을 새워야함
- */
-const strategy = new JwtStrategy(options, async (jwtPayload, done) => {
-  if (Date.now() >= jwtPayload.exp * 1000) {
+const verify: VerifyCallback = async (payload, done) => {
+  const { email, provider } = payload;
+
+  if (isNil(email) || isNil(provider)) {
     return done(null, false, {
-      status: 401,
-      message: '토큰이 만료되었습니다',
+      message: '토큰에 필요한 정보가 포함되지 않음',
     });
   }
-  return done(null, jwtPayload);
-});
+
+  const userData = await UserModel.read({ email });
+
+  if (isNil(userData)) {
+    return done(null, false, {
+      message: '존재하지 않는 계정',
+    });
+  }
+
+  return done(null, payload);
+};
+
+const strategy = new JwtStrategy(option, verify);
 
 export default strategy;
