@@ -16,16 +16,11 @@ export const app = new Koa();
 const router = new Router();
 
 /**
- * @api {get} /user/:id Request User information
+ * @api {get} / Hello World
+ * @apiDescription Hello World 반환, 서버가 살아있는지 확인할 때 사용
  *
- * @apiVersion        0.1.0
- * @apiName GetUser
- * @apiGroup User
- *
- * @apiParam {Number} id Users unique ID.
- *
- * @apiSuccess {String} firstname Firstname of the User.
- * @apiSuccess {String} lastname  Lastname of the User.
+ * @apiVersion 0.1.0
+ * @apiGroup Test
  */
 router.get('/', async (ctx: Context) => {
   ctx.body = 'Hello World!';
