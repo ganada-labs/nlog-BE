@@ -1,4 +1,5 @@
 import Koa, { Context } from 'koa';
+import cookie from 'koa-cookie';
 import Router from '@koa/router';
 import Auth from '@/router/auth';
 import User from '@/router/user';
@@ -37,4 +38,5 @@ app.use(Auth.routes());
 app.use(User.routes());
 app.use(router.allowedMethods());
 
+app.use(cookie());
 export default app;
