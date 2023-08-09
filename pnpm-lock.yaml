@@ -14,9 +14,6 @@ dependencies:
   koa:
     specifier: ^2.14.2
     version: 2.14.2
-  koa-cookie:
-    specifier: ^1.0.0
-    version: 1.0.0
   koa-passport:
     specifier: ^6.0.0
     version: 6.0.0
@@ -40,9 +37,6 @@ devDependencies:
   '@types/koa':
     specifier: ^2.13.6
     version: 2.13.6
-  '@types/koa-cookie':
-    specifier: ^1.0.0
-    version: 1.0.0
   '@types/koa-passport':
     specifier: ^6.0.0
     version: 6.0.0
@@ -894,12 +888,6 @@ packages:
 
   /@types/koa-compose@3.2.5:
     resolution: {integrity: sha512-B8nG/OoE1ORZqCkBVsup/AKcvjdgoHnfi4pZMn5UwAPCbhk/96xyv284eBYW8JlQbQ7zDmnpFr68I/40mFoIBQ==}
-    dependencies:
-      '@types/koa': 2.13.6
-    dev: true
-
-  /@types/koa-cookie@1.0.0:
-    resolution: {integrity: sha512-0YTUgGqXlyVV2zYkDaDr5KNOXLki3ZqHP3adtlcz8+Fh94vzLfv8mnlxzDpfHuj//bIkwsh2zHVzdNrurUIKvA==}
     dependencies:
       '@types/koa': 2.13.6
     dev: true
@@ -3503,10 +3491,6 @@ packages:
     dependencies:
       co: 4.6.0
       koa-compose: 4.1.0
-    dev: false
-
-  /koa-cookie@1.0.0:
-    resolution: {integrity: sha512-MCAek9ttjFFUHx1oUDxPdzTgfllOR1o/7S1OEHdmyBoZ6Kt8V1+J4JWq0RCjxD2JDhKHWZGdoLqBTRWaYOoF6Q==}
     dev: false
 
   /koa-passport@6.0.0:
