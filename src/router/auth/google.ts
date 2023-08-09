@@ -82,13 +82,13 @@ GoogleAuth.get(
 
     ctx.cookies.set('access_token', accessToken, {
       httpOnly: true,
-      secure: true,
+      // secure: true,
       domain: DOMAIN,
     });
 
     ctx.cookies.set('refresh_token', refreshToken, {
       httpOnly: true,
-      secure: true,
+      // secure: true,
       domain: DOMAIN,
     });
     ctx.redirect(OAUTH_REDIRECT_URL);
