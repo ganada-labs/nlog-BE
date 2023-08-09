@@ -80,7 +80,10 @@ GoogleAuth.get(
       return;
     }
 
-    ctx.cookies.set('token', accessToken, { httpOnly: true, domain: DOMAIN });
+    ctx.cookies.set('access_token', accessToken, {
+      httpOnly: true,
+      domain: DOMAIN,
+    });
     ctx.redirect(OAUTH_REDIRECT_URL);
   }
 );

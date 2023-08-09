@@ -59,7 +59,7 @@ export const genTokens = (payload: TokenPayload) => {
  */
 export const verify = (token: string) => {
   try {
-    const decoded = jwt.verify(token, JWT_SECRET, { ignoreExpiration: true });
+    const decoded = jwt.verify(token, JWT_SECRET);
 
     if (type.isString(decoded)) {
       throw Error('검증에 실패함');
