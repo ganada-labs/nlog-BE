@@ -55,7 +55,6 @@ GoogleAuth.get(
     failureRedirect: '/callback/failure',
   }),
   async (ctx) => {
-    console.log(58);
     const { userEmail, userName, provider } = normalizeUser(ctx.state.user);
 
     if (!isEmail(userEmail)) {
@@ -80,8 +79,6 @@ GoogleAuth.get(
       ctx.redirect(`${OAUTH_REDIRECT_URL}?status=failed&message='${message}'`);
       return;
     }
-
-    console.log(83);
 
     ctx.cookies.set('access_token', accessToken, {
       httpOnly: true,
