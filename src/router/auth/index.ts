@@ -52,7 +52,7 @@ auth.use('/google', GoogleAuth.routes());
  * @apiVersion 0.1.0
  * @apiName refresh
  * @apiGroup Auth
- * @apiHeader {String} authorization Bearer 토큰 스트링
+ * @apiHeader {String} authorization Bearer 토큰 스트링, 리프레시 토큰을 넘길 것
  */
 auth.get('/refresh', refreshTokenAuthenticate, async (ctx: Context) => {
   const { email, provider } = ctx.state.user;
