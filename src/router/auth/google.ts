@@ -67,7 +67,7 @@ GoogleAuth.get(
       await signup({ email: userEmail, name: userName });
     }
 
-    const { accessToken, refreshToken } = token.genTokens({
+    const refreshToken = token.genRefreshToken({
       email: userEmail,
       provider,
     });
@@ -80,15 +80,11 @@ GoogleAuth.get(
       return;
     }
 
-    ctx.cookies.set('access_token', accessToken, {
-      httpOnly: true,
-      domain: DOMAIN,
-    });
-
     ctx.cookies.set('refresh_token', refreshToken, {
       httpOnly: true,
       domain: DOMAIN,
     });
+
     ctx.redirect(OAUTH_REDIRECT_URL);
   }
 );

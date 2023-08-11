@@ -48,27 +48,27 @@ auth.use('/google', GoogleAuth.routes());
 /**
  * @api {get} /auth/refresh Refresh
  * @apiDescription 토큰 만료시 토큰을 재발급할 수 있는 API
+ * Access Token은 반환값으로, Refresh Token은 Cookie로 설정되어 반환된다.
  *
  * @apiVersion 0.1.0
  * @apiName refresh
  * @apiGroup Auth
- * @apiHeader {String} authorization Bearer 토큰 스트링, 리프레시 토큰을 넘길 것
+ * @apiHeader {String} authorization Bearer 토큰 스트링, 리프레시 토큰을 Authorization Header로 넘길 것
+ * @apiSuccess {String} 액세스 토큰
  */
 auth.get('/refresh', refreshTokenAuthenticate, async (ctx: Context) => {
   const { email, provider } = ctx.state.user;
 
   const { accessToken, refreshToken } = token.genTokens({ email, provider });
   await TokenModel.set({ email }, refreshToken);
-  ctx.cookies.set('access_token', accessToken, {
-    httpOnly: true,
-    domain: DOMAIN,
-  });
+
   ctx.cookies.set('refresh_token', refreshToken, {
     httpOnly: true,
     domain: DOMAIN,
   });
 
-  ctx.status = 204;
+  ctx.status = 200;
+  ctx.body = accessToken;
 });
 
 export default auth;
