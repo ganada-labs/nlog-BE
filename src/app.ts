@@ -1,5 +1,6 @@
 import Koa, { Context } from 'koa';
 import Router from '@koa/router';
+import cors from '@koa/cors';
 import Auth from '@/router/auth';
 import User from '@/router/user';
 import googleStrategy from '@/strategies/google';
@@ -7,6 +8,8 @@ import localStrategy from '@/strategies/local';
 import passport from 'koa-passport';
 import * as mongodb from '@/repositories/mongodb';
 import * as redis from '@/repositories/redis';
+
+const CLIENT_DOMAIN = import.meta.env.VITE_DOMAIN;
 
 mongodb.connect();
 redis.connect();
@@ -32,6 +35,15 @@ passport.use(googleStrategy.name, googleStrategy);
 passport.use('local', localStrategy);
 app.use(passport.initialize());
 
+/**
+ * 서브도메인에 대한 CORS 해제
+ */
+app.use(
+  cors({
+    origin: `https://${CLIENT_DOMAIN}`,
+    credentials: true,
+  })
+);
 app.use(router.routes());
 app.use(Auth.routes());
 app.use(User.routes());
