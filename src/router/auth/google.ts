@@ -55,6 +55,7 @@ GoogleAuth.get(
     failureRedirect: '/callback/failure',
   }),
   async (ctx) => {
+    console.log(ctx.query);
     const { userEmail, userName, provider } = normalizeUser(ctx.state.user);
 
     if (!isEmail(userEmail)) {
