@@ -40,7 +40,7 @@ app.use(passport.initialize());
  */
 app.use(
   cors({
-    origin: `https://${CLIENT_DOMAIN}`,
+    origin: `https://www.${CLIENT_DOMAIN}`,
     credentials: true,
   })
 );
