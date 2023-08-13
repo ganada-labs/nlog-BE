@@ -4,8 +4,6 @@ import TokenModel from '@/models/auth';
 import { isNil, type, token } from '@/utils';
 import GoogleAuth from './google';
 
-const DOMAIN = import.meta.env.VITE_DOMAIN;
-
 const refreshTokenAuthenticate = async (ctx: Context, next: Next) => {
   const refreshToken = token.getBearerCredential(ctx.header.authorization);
   if (refreshToken === '') {
@@ -54,7 +52,8 @@ auth.use('/google', GoogleAuth.routes());
  * @apiName refresh
  * @apiGroup Auth
  * @apiHeader {String} authorization Bearer 토큰 스트링, 리프레시 토큰을 Authorization Header로 넘길 것
- * @apiSuccess {String} 액세스 토큰
+ * @apiSuccess {String} accessToken 액세스 토큰
+ * @apiSuccess {String} refreshToken 리프레시 토큰
  */
 auth.get('/refresh', refreshTokenAuthenticate, async (ctx: Context) => {
   const { email, provider } = ctx.state.user;
@@ -62,13 +61,11 @@ auth.get('/refresh', refreshTokenAuthenticate, async (ctx: Context) => {
   const { accessToken, refreshToken } = token.genTokens({ email, provider });
   await TokenModel.set({ email }, refreshToken);
 
-  ctx.cookies.set('refresh_token', refreshToken, {
-    httpOnly: true,
-    domain: DOMAIN,
-  });
-
   ctx.status = 200;
-  ctx.body = accessToken;
+  ctx.body = {
+    accessToken,
+    refreshToken,
+  };
 });
 
 export default auth;
