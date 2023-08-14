@@ -11,6 +11,9 @@ dependencies:
   '@koa/router':
     specifier: ^12.0.0
     version: 12.0.0
+  corail:
+    specifier: ^0.2.8
+    version: 0.2.8
   jsonwebtoken:
     specifier: ^9.0.1
     version: 9.0.1
@@ -1887,6 +1890,10 @@ packages:
     dependencies:
       depd: 2.0.0
       keygrip: 1.1.0
+    dev: false
+
+  /corail@0.2.8:
+    resolution: {integrity: sha512-091CiDl3aGORtF4SPQwqHfLPwWGlwHJ4hvlnMVc+nDxdgPTrVbfa10GQ6Hid3Wu6y7vl8E0yPBZvWLs2XEzAwA==}
     dev: false
 
   /create-require@1.1.1:

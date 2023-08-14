@@ -1,29 +1,67 @@
 import { Next, type Context } from 'koa';
 import Router from '@koa/router';
 import TokenModel from '@/models/auth';
-import { isNil, type, token } from '@/utils';
+import { isNil, type, token as Token } from '@/utils';
+import corail from 'corail';
+import { StatusError } from '@/utils/error';
 import GoogleAuth from './google';
 
-const refreshTokenAuthenticate = async (ctx: Context, next: Next) => {
-  const refreshToken = token.getBearerCredential(ctx.header.authorization);
-  if (refreshToken === '') {
-    ctx.throw(401, '토큰이 없음');
+type TokenPayload = { email: string; provider: string };
+type TokenInfo = TokenPayload & {
+  token: string;
+};
+
+const isUnusedToken = async (tokenInfo: TokenInfo) => {
+  const savedToken = await TokenModel.get({ email: tokenInfo.email });
+
+  if (isNil(savedToken) || tokenInfo.token !== savedToken) {
+    throw new StatusError(403, '탈취된 토큰');
   }
 
-  const decoded = token.verify(refreshToken);
+  return tokenInfo;
+};
+
+const verifyToken = (token: string) => {
+  const decoded = Token.verify(token);
+
   if (type.isString(decoded)) {
-    ctx.throw(401, `토큰이 잘못됨: ${decoded}`);
+    throw new StatusError(401, `토큰이 잘못됨: ${decoded}`);
   }
 
-  const { email, provider } = decoded;
-  if (isNil(email) || isNil(provider)) {
-    ctx.throw(401, '토큰에 필요한 정보가 포함되지 않음');
+  if (isNil(decoded.email) || isNil(decoded.provider)) {
+    throw new StatusError(401, '토큰에 필요한 정보가 포함되지 않음');
   }
 
-  const savedRefreshToken = await TokenModel.get({ email });
-  if (isNil(savedRefreshToken) || refreshToken !== savedRefreshToken) {
-    ctx.throw(403, '탈취된 토큰');
+  return {
+    token,
+    email: decoded.email,
+    provider: decoded.provider,
+  };
+};
+
+const extractToken = (authorization: string) => {
+  const token = Token.getBearerCredential(authorization);
+  if (token === '') {
+    throw new StatusError(401, '토큰이 없음');
   }
+  return token;
+};
+
+const refreshTokenAuthenticate = async (ctx: Context, next: Next) => {
+  const result = await corail.railRight(
+    isUnusedToken,
+    verifyToken,
+    extractToken
+  )(ctx.header.authorization);
+
+  if (corail.isFailed(result)) {
+    if (result.err instanceof StatusError) {
+      ctx.throw(result.err.status, result.err.message);
+    }
+    return;
+  }
+
+  const { email, provider } = result;
 
   ctx.state.user = {
     email,
@@ -58,7 +96,7 @@ auth.use('/google', GoogleAuth.routes());
 auth.get('/refresh', refreshTokenAuthenticate, async (ctx: Context) => {
   const { email, provider } = ctx.state.user;
 
-  const { accessToken, refreshToken } = token.genTokens({ email, provider });
+  const { accessToken, refreshToken } = Token.genTokens({ email, provider });
   await TokenModel.set({ email }, refreshToken);
 
   ctx.status = 200;
