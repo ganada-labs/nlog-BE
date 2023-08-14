@@ -8,6 +8,7 @@ export type TokenDecoded = string | TokenSuccessDecoded;
 export type TokenOption = {
   expiresIn?: `${string}s`;
 };
+
 /**
  * 토큰을 생성해 반환한다.
  *
