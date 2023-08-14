@@ -1,74 +1,9 @@
 import { Next, type Context } from 'koa';
+
 import Router from '@koa/router';
-import TokenModel from '@/models/auth';
-import { isNil, type, token as Token } from '@/utils';
-import corail from 'corail';
+import * as Auth from '@/domains/auth';
 import { StatusError } from '@/utils/error';
 import GoogleAuth from './google';
-
-type TokenPayload = { email: string; provider: string };
-type TokenInfo = TokenPayload & {
-  token: string;
-};
-
-const isUnusedToken = async (tokenInfo: TokenInfo) => {
-  const savedToken = await TokenModel.get({ email: tokenInfo.email });
-
-  if (isNil(savedToken) || tokenInfo.token !== savedToken) {
-    throw new StatusError(403, '탈취된 토큰');
-  }
-
-  return tokenInfo;
-};
-
-const verifyToken = (token: string) => {
-  const decoded = Token.verify(token);
-
-  if (type.isString(decoded)) {
-    throw new StatusError(401, `토큰이 잘못됨: ${decoded}`);
-  }
-
-  if (isNil(decoded.email) || isNil(decoded.provider)) {
-    throw new StatusError(401, '토큰에 필요한 정보가 포함되지 않음');
-  }
-
-  return {
-    token,
-    email: decoded.email,
-    provider: decoded.provider,
-  };
-};
-
-const extractToken = (authorization: string) => {
-  const token = Token.getBearerCredential(authorization);
-  if (token === '') {
-    throw new StatusError(401, '토큰이 없음');
-  }
-  return token;
-};
-
-const refreshTokenAuthenticate = async (ctx: Context, next: Next) => {
-  const result = await corail.railRight(
-    isUnusedToken,
-    verifyToken,
-    extractToken
-  )(ctx.header.authorization);
-
-  if (corail.isFailed(result)) {
-    if (result.err instanceof StatusError) {
-      ctx.throw(result.err.status, result.err.message);
-    }
-    return;
-  }
-
-  const { email, provider } = result;
-
-  ctx.state.user = {
-    email,
-    provider,
-  };
-  await next();
-};
 
 const auth = new Router({ prefix: '/auth' });
 /**
@@ -81,6 +16,36 @@ const auth = new Router({ prefix: '/auth' });
  */
 auth.use('/google', GoogleAuth.routes());
 
+const verifyRequest = async (ctx: Context, next: Next) => {
+  const { authorization } = ctx.header;
+
+  const result = await Auth.verifyRefreshToken(authorization);
+
+  if (result instanceof StatusError) {
+    ctx.throw(result.status, result.message);
+  }
+
+  const { email, provider } = result;
+
+  ctx.state.user = {
+    email,
+    provider,
+  };
+  await next();
+};
+
+const refresh = async (ctx: Context) => {
+  const { email, provider } = ctx.state.user;
+
+  const { accessToken, refreshToken } = Auth.generateTokens(email, provider);
+  await Auth.saveToken(email, refreshToken);
+
+  ctx.status = 200;
+  ctx.body = {
+    accessToken,
+    refreshToken,
+  };
+};
 /**
  * @api {get} /auth/refresh Refresh
  * @apiDescription 토큰 만료시 토큰을 재발급할 수 있는 API
@@ -93,17 +58,6 @@ auth.use('/google', GoogleAuth.routes());
  * @apiSuccess {String} accessToken 액세스 토큰
  * @apiSuccess {String} refreshToken 리프레시 토큰
  */
-auth.get('/refresh', refreshTokenAuthenticate, async (ctx: Context) => {
-  const { email, provider } = ctx.state.user;
-
-  const { accessToken, refreshToken } = Token.genTokens({ email, provider });
-  await TokenModel.set({ email }, refreshToken);
-
-  ctx.status = 200;
-  ctx.body = {
-    accessToken,
-    refreshToken,
-  };
-});
+auth.get('/refresh', verifyRequest, refresh);
 
 export default auth;
