@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { isString, token } from '@/utils';
+import { isString } from '@/utils';
+import * as token from '../token';
 
 const setup = () => {
   const content = {

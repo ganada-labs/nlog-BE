@@ -2,7 +2,8 @@ import Router from '@koa/router';
 import passport from 'koa-passport';
 import AuthModel from '@/models/auth';
 import UserModel, { type UserSchema } from '@/models/user';
-import { isEmail, token } from '@/utils';
+import { isEmail } from '@/utils';
+import * as Auth from '@/domains/auth';
 
 type UserRaw = {
   displayName: string;
@@ -67,10 +68,7 @@ GoogleAuth.get(
       await signup({ email: userEmail, name: userName });
     }
 
-    const refreshToken = token.genRefreshToken({
-      email: userEmail,
-      provider,
-    });
+    const refreshToken = Auth.generateRefreshToken(userEmail, provider);
 
     const success = await saveRefreshToken(userEmail, refreshToken);
 
