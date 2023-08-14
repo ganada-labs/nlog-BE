@@ -7,11 +7,11 @@ import {
 import UserModel from '@/models/user';
 import { isNil } from '@/utils';
 
-const JWT_SECRET = import.meta.env.VITE_JWT_SECRET;
+const JWT_ACCESS_SECRET = import.meta.env.VITE_JWT_ACCESS_SECRET;
 
 const option = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-  secretOrKey: JWT_SECRET,
+  secretOrKey: JWT_ACCESS_SECRET,
 } satisfies StrategyOptions;
 
 const verify: VerifyCallback = async (payload, done) => {
