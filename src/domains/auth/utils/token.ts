@@ -1,8 +1,9 @@
 import jwt from 'jsonwebtoken';
 import * as type from '@/utils/types';
 
-export const ACCESS_TOKEN_EXPIRES_IN = '3600s';
-export const REFRESH_TOKEN_EXPIRES_IN = '14d';
+export const ACCESS_TOKEN_EXPIRES_IN = 3600; // 1 hour
+export const REFRESH_TOKEN_EXPIRES_IN = 3600 * 24 * 14; // 14 day
+
 const JWT_SECRET: jwt.Secret = import.meta.env.VITE_JWT_SECRET ?? 'my_secret';
 
 export type TokenPayload = string | object | Buffer;
@@ -20,7 +21,7 @@ const genToken = (payload: TokenPayload, options?: jwt.SignOptions) =>
  */
 export const genRefreshToken = (payload: TokenPayload) => {
   const options = {
-    expiresIn: REFRESH_TOKEN_EXPIRES_IN,
+    expiresIn: `${REFRESH_TOKEN_EXPIRES_IN}s`,
   };
 
   return genToken(payload, options);
@@ -34,7 +35,7 @@ export const genRefreshToken = (payload: TokenPayload) => {
  */
 export const genAccessToken = (payload: TokenPayload) => {
   const options = {
-    expiresIn: ACCESS_TOKEN_EXPIRES_IN,
+    expiresIn: `${ACCESS_TOKEN_EXPIRES_IN}s`,
   };
 
   return genToken(payload, options);
