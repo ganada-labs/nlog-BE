@@ -25,6 +25,7 @@ export const genToken = (
  * 토큰을 검증한다.
  *
  * @param token 토큰 문자열
+ * @param secret 검증에 사용되는 비밀키
  * @returns 토큰 디코딩 결과 혹은 실패 메세지
  */
 export const verify = (token: string, secret: TokenSecret) => {
