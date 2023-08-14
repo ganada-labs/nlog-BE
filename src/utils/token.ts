@@ -6,7 +6,8 @@ export const REFRESH_TOKEN_EXPIRES_IN = '14d';
 const JWT_SECRET: jwt.Secret = import.meta.env.VITE_JWT_SECRET ?? 'my_secret';
 
 export type TokenPayload = string | object | Buffer;
-export type TokenDecoded = string | jwt.Jwt | jwt.JwtPayload;
+export type TokenSuccessDecoded = jwt.JwtPayload;
+export type TokenDecoded = string | TokenSuccessDecoded;
 
 const genToken = (payload: TokenPayload, options?: jwt.SignOptions) =>
   jwt.sign(payload, JWT_SECRET, options);
