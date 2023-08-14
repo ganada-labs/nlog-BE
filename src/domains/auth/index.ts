@@ -23,7 +23,7 @@ export type TokenInfo = TokenPayload & {
 
 export const isUnusedToken = async (tokenInfo: TokenInfo) => {
   const savedToken = await TokenModel.get({ email: tokenInfo.email });
-
+  console.log('debug', savedToken, '<->', tokenInfo.token);
   if (isNil(savedToken) || tokenInfo.token !== savedToken) {
     throw new StatusError(403, '탈취된 토큰');
   }
