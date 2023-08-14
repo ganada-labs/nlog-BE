@@ -5,6 +5,11 @@ import { StatusError } from '@/utils/error';
 import { isNil, type } from '@/utils';
 import { token as Token } from './utils';
 
+/**
+ * TODO: strategies auth 도메인으로 옮기기
+ * network 관련 로직 분리
+ * passport를 auth 도메인으로 이동
+ */
 export type TokenPayload = { email: string; provider: string };
 export type TokenInfo = TokenPayload & {
   token: string;
