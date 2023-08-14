@@ -18,13 +18,12 @@ export const JWT_REFRESH_SECRET =
  */
 export type TokenPayload = { email: string; provider: string };
 export type TokenInfo = TokenPayload & {
-  token: string;
+  refreshToken: string;
 };
 
 export const isUnusedToken = async (tokenInfo: TokenInfo) => {
   const savedToken = await TokenModel.get({ email: tokenInfo.email });
-  console.log('debug', savedToken, '<->', tokenInfo.token);
-  if (isNil(savedToken) || tokenInfo.token !== savedToken) {
+  if (isNil(savedToken) || tokenInfo.refreshToken !== savedToken) {
     throw new StatusError(403, '탈취된 토큰');
   }
 
@@ -43,7 +42,7 @@ export const verifyRefreshToken = (refreshToken: string) => {
   }
 
   return {
-    token,
+    refreshToken,
     email: decoded.email,
     provider: decoded.provider,
   };
