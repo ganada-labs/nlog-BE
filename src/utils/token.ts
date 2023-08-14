@@ -27,7 +27,7 @@ export const genToken = (
  * @param token 토큰 문자열
  * @returns 토큰 디코딩 결과 혹은 실패 메세지
  */
-export const verify = (token: string, secret: jwt.Secret) => {
+export const verify = (token: string, secret: TokenSecret) => {
   try {
     const decoded = jwt.verify(token, secret);
 
