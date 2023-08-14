@@ -81,7 +81,7 @@ GoogleAuth.get(
     ctx.cookies.set('refresh_token', refreshToken, {
       httpOnly: true,
       domain: DOMAIN,
-      maxAge: Auth.token.REFRESH_TOKEN_EXPIRES_IN,
+      maxAge: Auth.REFRESH_TOKEN_EXPIRES_IN,
     });
 
     ctx.redirect(OAUTH_REDIRECT_URL);

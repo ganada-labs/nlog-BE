@@ -19,7 +19,7 @@ auth.use('/google', GoogleAuth.routes());
 const verifyRequest = async (ctx: Context, next: Next) => {
   const { authorization } = ctx.header;
 
-  const result = await Auth.verifyRefreshToken(authorization);
+  const result = await Auth.checkAuthorization(authorization);
 
   if (result instanceof StatusError) {
     ctx.throw(result.status, result.message);

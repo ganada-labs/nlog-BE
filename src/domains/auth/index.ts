@@ -2,10 +2,15 @@ import corail from 'corail';
 
 import TokenModel from '@/models/auth';
 import { StatusError } from '@/utils/error';
-import { isNil, type } from '@/utils';
-import { token as Token } from './utils';
+import { isNil, type, token } from '@/utils';
 
-export * from './utils';
+export const ACCESS_TOKEN_EXPIRES_IN = 3600; // 1 hour
+export const REFRESH_TOKEN_EXPIRES_IN = 3600 * 24 * 14; // 14 day
+
+export const JWT_ACCESS_SECRET =
+  import.meta.env.VITE_JWT_ACCESS_SECRET ?? 'my_access_secret';
+export const JWT_REFRESH_SECRET =
+  import.meta.env.VITE_JWT_REFRESH_SECRET ?? 'my_refresh_secret';
 /**
  * TODO: strategies auth 도메인으로 옮기기
  * network 관련 로직 분리
@@ -26,8 +31,8 @@ export const isUnusedToken = async (tokenInfo: TokenInfo) => {
   return tokenInfo;
 };
 
-export const verifyToken = (token: string) => {
-  const decoded = Token.verify(token);
+export const verifyRefreshToken = (refreshToken: string) => {
+  const decoded = token.verify(refreshToken, JWT_REFRESH_SECRET);
 
   if (type.isString(decoded)) {
     throw new StatusError(401, `토큰이 잘못됨: ${decoded}`);
@@ -45,29 +50,43 @@ export const verifyToken = (token: string) => {
 };
 
 export const extractToken = (authorization: string) => {
-  const token = Token.getBearerCredential(authorization);
-  if (token === '') {
+  const refreshToken = token.getBearerCredential(authorization);
+  if (refreshToken === '') {
     throw new StatusError(401, '토큰이 없음');
   }
-  return token;
+  return refreshToken;
 };
 
-export const generateTokens = (email: string, provider: string) =>
-  Token.genTokens({ email, provider });
-
-export const saveToken = async (email: string, token: string) => {
-  await TokenModel.set({ email }, token);
-};
+export const generateAccessToken = (email: string, provider: string) =>
+  token.genToken({ email, provider }, JWT_ACCESS_SECRET, {
+    expiresIn: `${ACCESS_TOKEN_EXPIRES_IN}s`,
+  });
 
 export const generateRefreshToken = (email: string, provider: string) =>
-  Token.genRefreshToken({ email, provider });
+  token.genToken({ email, provider }, JWT_REFRESH_SECRET, {
+    expiresIn: `${REFRESH_TOKEN_EXPIRES_IN}s`,
+  });
 
-export const verifyRefreshToken = async (
+export const generateTokens = (email: string, provider: string) => {
+  const accessToken = generateAccessToken(email, provider);
+  const refreshToken = generateRefreshToken(email, provider);
+
+  return {
+    accessToken,
+    refreshToken,
+  };
+};
+
+export const saveToken = async (email: string, refreshToken: string) => {
+  await TokenModel.set({ email }, refreshToken);
+};
+
+export const checkAuthorization = async (
   authorization?: string
 ): Promise<StatusError | TokenInfo> => {
   const result = await corail.railRight(
     isUnusedToken,
-    verifyToken,
+    verifyRefreshToken,
     extractToken
   )(authorization);
 
