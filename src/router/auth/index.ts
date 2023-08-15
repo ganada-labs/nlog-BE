@@ -37,6 +37,7 @@ const verifyRequest = async (ctx: Context, next: Next) => {
 };
 
 const refresh = async (ctx: Context) => {
+  console.log(ctx);
   const { email, provider } = ctx.state.user;
 
   const { accessToken, refreshToken } = Auth.generateTokens(email, provider);
