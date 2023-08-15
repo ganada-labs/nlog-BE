@@ -84,7 +84,6 @@ GoogleAuth.get(
       maxAge: Auth.REFRESH_TOKEN_EXPIRES_IN,
       sameSite: 'strict',
       path: '/',
-      signed: true,
     });
 
     ctx.redirect(OAUTH_REDIRECT_URL);
