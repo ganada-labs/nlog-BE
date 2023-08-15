@@ -82,6 +82,7 @@ GoogleAuth.get(
       httpOnly: true,
       domain: DOMAIN,
       maxAge: Auth.REFRESH_TOKEN_EXPIRES_IN,
+      sameSite: 'strict',
       path: '/',
     });
 
