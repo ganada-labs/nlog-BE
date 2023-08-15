@@ -32,7 +32,7 @@ router.get('/', async (ctx: Context) => {
 /**
  * 쿠키 미들웨어 등록
  */
-app.use(cookie());
+// app.use(cookie());
 /**
  * passport 등록
  */

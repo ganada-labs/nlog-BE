@@ -19,8 +19,8 @@ const auth = new Router({ prefix: '/auth' });
 auth.use('/google', GoogleAuth.routes());
 
 const verifyRequest = async (ctx: Context, next: Next) => {
-  const refreshToken = ctx.cookies.get('refresh_token');
-  console.log('refresCtx:', ctx);
+  const refreshToken = ctx.cookies.get('refresh_token', { signed: true });
+  console.log('refresCtx:', refreshToken, ctx);
   const result = await Auth.checkAuthorization(refreshToken);
 
   if (result instanceof StatusError) {
@@ -49,6 +49,7 @@ const refresh = async (ctx: Context) => {
     maxAge: Auth.REFRESH_TOKEN_EXPIRES_IN,
     sameSite: 'strict',
     path: '/',
+    signed: true,
   });
   ctx.body = {
     accessToken,
