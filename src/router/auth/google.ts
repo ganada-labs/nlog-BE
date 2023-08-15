@@ -82,7 +82,7 @@ GoogleAuth.get(
       httpOnly: true,
       domain: DOMAIN,
       maxAge: Auth.REFRESH_TOKEN_EXPIRES_IN,
-      path: '/auth/refresh',
+      path: '/',
     });
 
     ctx.redirect(OAUTH_REDIRECT_URL);
