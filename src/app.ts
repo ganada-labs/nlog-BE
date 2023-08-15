@@ -1,5 +1,5 @@
 import Koa, { Context } from 'koa';
-import cookie from 'koa-cookie';
+// import cookie from 'koa-cookie';
 import passport from 'koa-passport';
 import Router from '@koa/router';
 import cors from '@koa/cors';
