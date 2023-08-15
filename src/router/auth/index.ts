@@ -20,7 +20,6 @@ auth.use('/google', GoogleAuth.routes());
 
 const verifyRequest = async (ctx: Context, next: Next) => {
   const refreshToken = ctx.cookies.get('refresh_token');
-  console.log('refresCtx:', refreshToken);
   const result = await Auth.checkAuthorization(refreshToken);
 
   if (result instanceof StatusError) {
