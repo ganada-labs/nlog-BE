@@ -1,11 +1,12 @@
 import Koa, { Context } from 'koa';
+import cookie from 'koa-cookie';
+import passport from 'koa-passport';
 import Router from '@koa/router';
 import cors from '@koa/cors';
 import Auth from '@/router/auth';
 import User from '@/router/user';
 import googleStrategy from '@/strategies/google';
 import localStrategy from '@/strategies/local';
-import passport from 'koa-passport';
 import * as mongodb from '@/repositories/mongodb';
 import * as redis from '@/repositories/redis';
 
@@ -28,6 +29,10 @@ const router = new Router();
 router.get('/', async (ctx: Context) => {
   ctx.body = 'Hello World!';
 });
+/**
+ * 쿠키 미들웨어 등록
+ */
+app.use(cookie());
 /**
  * passport 등록
  */
