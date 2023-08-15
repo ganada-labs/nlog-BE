@@ -5,6 +5,8 @@ import * as Auth from '@/domains/auth';
 import { StatusError } from '@/utils/error';
 import GoogleAuth from './google';
 
+const DOMAIN = import.meta.env.VITE_DOMAIN;
+
 const auth = new Router({ prefix: '/auth' });
 /**
  * @api {get} /auth/google Google Login
@@ -17,9 +19,9 @@ const auth = new Router({ prefix: '/auth' });
 auth.use('/google', GoogleAuth.routes());
 
 const verifyRequest = async (ctx: Context, next: Next) => {
-  const { authorization } = ctx.header;
-
-  const result = await Auth.checkAuthorization(authorization);
+  const refreshToken = ctx.cookies.get('refresh_token');
+  console.log('refresT:', refreshToken);
+  const result = await Auth.checkAuthorization(refreshToken);
 
   if (result instanceof StatusError) {
     ctx.throw(result.status, result.message);
@@ -41,9 +43,14 @@ const refresh = async (ctx: Context) => {
   await Auth.saveToken(email, refreshToken);
 
   ctx.status = 200;
+  ctx.cookies.set('refresh_token', refreshToken, {
+    httpOnly: true,
+    domain: DOMAIN,
+    maxAge: Auth.REFRESH_TOKEN_EXPIRES_IN,
+    path: '/auth/refresh',
+  });
   ctx.body = {
     accessToken,
-    refreshToken,
   };
 };
 /**
