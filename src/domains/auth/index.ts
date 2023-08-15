@@ -48,8 +48,7 @@ export const verifyRefreshToken = (refreshToken: string) => {
   };
 };
 
-export const extractToken = (authorization: string) => {
-  const refreshToken = token.getBearerCredential(authorization);
+export const isRefreshTokenExist = (refreshToken?: string) => {
   if (refreshToken === '') {
     throw new StatusError(401, '토큰이 없음');
   }
@@ -81,13 +80,13 @@ export const saveToken = async (email: string, refreshToken: string) => {
 };
 
 export const checkAuthorization = async (
-  authorization?: string
+  refreshToken?: string
 ): Promise<StatusError | TokenInfo> => {
   const result = await corail.railRight(
     isUnusedToken,
     verifyRefreshToken,
-    extractToken
-  )(authorization);
+    isRefreshTokenExist
+  )(refreshToken);
 
   if (corail.isFailed(result)) {
     return result.err;
