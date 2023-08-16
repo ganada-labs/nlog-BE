@@ -3,12 +3,7 @@ import corail from 'corail';
 import TokenModel from '@/models/auth';
 import { StatusError } from '@/utils/error';
 import { isNil, type, token } from '@/utils';
-import {
-  generateAccessToken,
-  generateRefreshToken,
-  type TokenPayload,
-  JWT_REFRESH_SECRET,
-} from './token';
+import { type TokenPayload, JWT_REFRESH_SECRET } from './token';
 /**
  * TODO: strategies auth 도메인으로 옮기기
  * network 관련 로직 분리
@@ -52,16 +47,6 @@ export const isRefreshTokenExist = (refreshToken?: string) => {
     throw new StatusError(401, '토큰이 없음');
   }
   return refreshToken;
-};
-
-export const generateTokens = (email: string, provider: string) => {
-  const accessToken = generateAccessToken({ email, provider });
-  const refreshToken = generateRefreshToken({ email, provider });
-
-  return {
-    accessToken,
-    refreshToken,
-  };
 };
 
 export const saveToken = async (email: string, refreshToken: string) => {

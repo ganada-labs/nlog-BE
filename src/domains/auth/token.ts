@@ -19,3 +19,13 @@ export const generateRefreshToken = (payload: TokenPayload) =>
   token.genToken(payload, JWT_REFRESH_SECRET, {
     expiresIn: `${REFRESH_TOKEN_EXPIRES_IN}s`,
   });
+
+export const generateTokens = (payload: TokenPayload) => {
+  const accessToken = generateAccessToken(payload);
+  const refreshToken = generateRefreshToken(payload);
+
+  return {
+    accessToken,
+    refreshToken,
+  };
+};
