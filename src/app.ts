@@ -1,11 +1,9 @@
 import Koa, { Context } from 'koa';
-import passport from 'koa-passport';
 import Router from '@koa/router';
 import cors from '@koa/cors';
 import Auth from '@/router/auth';
 import User from '@/router/user';
-import googleStrategy from '@/strategies/google';
-import localStrategy from '@/strategies/local';
+import passport from '@/middlewares/passport';
 import * as mongodb from '@/infrastructures/mongodb';
 import * as redis from '@/infrastructures/redis';
 
@@ -31,8 +29,6 @@ router.get('/', async (ctx: Context) => {
 /**
  * passport 등록
  */
-passport.use(googleStrategy.name, googleStrategy);
-passport.use('local', localStrategy);
 app.use(passport.initialize());
 
 /**
