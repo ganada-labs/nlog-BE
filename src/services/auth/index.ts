@@ -22,7 +22,6 @@ export const verifyRefreshToken = (refreshToken: string) => {
 
   return {
     refreshToken,
-    email: decoded.email,
-    provider: decoded.provider,
+    payload: decoded,
   };
 };
