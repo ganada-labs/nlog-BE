@@ -6,8 +6,8 @@ import Auth from '@/router/auth';
 import User from '@/router/user';
 import googleStrategy from '@/strategies/google';
 import localStrategy from '@/strategies/local';
-import * as mongodb from '@/repositories/mongodb';
-import * as redis from '@/repositories/redis';
+import * as mongodb from '@/infrastructures/mongodb';
+import * as redis from '@/infrastructures/redis';
 
 const CLIENT_DOMAIN = import.meta.env.VITE_DOMAIN;
 
