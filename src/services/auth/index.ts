@@ -1,27 +1,13 @@
-import TokenModel from '@/models/auth';
 import { StatusError } from '@/utils/error';
 import { isNil, type } from '@/utils';
-import { TokenPayload, decodeRefreshToken } from './token';
+import { decodeRefreshToken } from './token';
 /**
  * TODO: strategies auth 도메인으로 옮기기
  * network 관련 로직 분리
  * passport를 auth 도메인으로 이동
  */
 
-type TokenInfo = TokenPayload & {
-  refreshToken: string;
-};
-
 export * from './token';
-
-export const isUnusedToken = async (tokenInfo: TokenInfo) => {
-  const savedToken = await TokenModel.get({ email: tokenInfo.email });
-  if (isNil(savedToken) || tokenInfo.refreshToken !== savedToken) {
-    throw new StatusError(403, '탈취된 토큰');
-  }
-
-  return tokenInfo;
-};
 
 export const verifyRefreshToken = (refreshToken: string) => {
   const decoded = decodeRefreshToken(refreshToken);

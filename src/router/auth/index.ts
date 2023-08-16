@@ -10,7 +10,7 @@ import GoogleAuth from './google';
 const DOMAIN = import.meta.env.VITE_DOMAIN;
 
 export type TokenInfo = Auth.TokenPayload & {
-  refreshToken: string;
+  originToken: string;
 };
 
 const checkTokenExist = (token?: string) => {
@@ -20,11 +20,19 @@ const checkTokenExist = (token?: string) => {
   return token;
 };
 
+const checkUnusedToken = async (data: TokenInfo) => {
+  if (await Auth.isUnusedToken(data.email, data.originToken)) {
+    throw new StatusError(403, 'Token is already unsed');
+  }
+
+  return data;
+};
+
 export const checkAuthorization = async (
   refreshToken?: string
 ): Promise<StatusError | TokenInfo> => {
   const result = await corail.railRight(
-    Auth.isUnusedToken,
+    checkUnusedToken,
     Auth.verifyRefreshToken,
     checkTokenExist
   )(refreshToken);

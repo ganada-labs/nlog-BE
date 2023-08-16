@@ -1,4 +1,4 @@
-import { token } from '@/utils';
+import { isNil, token } from '@/utils';
 import TokenModel from '@/models/auth';
 
 export type TokenPayload = { email: string; provider: string };
@@ -27,3 +27,12 @@ export const saveToken = async (email: string, refreshToken: string) => {
 
 export const decodeRefreshToken = (refreshToken: string) =>
   token.verify(refreshToken, JWT_REFRESH_SECRET);
+
+export const isUnusedToken = async (email: string, tokenStr: string) => {
+  const savedToken = await TokenModel.get({ email });
+  if (isNil(savedToken) || tokenStr !== savedToken) {
+    return false;
+  }
+
+  return true;
+};
