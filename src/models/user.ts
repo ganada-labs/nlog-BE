@@ -6,9 +6,6 @@ export interface UserSchema {
   name: string;
 }
 
-/**
- * TODO: 유저 스키마 정하고 갱신
- */
 const userSchema = new Schema<UserSchema>({
   email: { type: String, required: true },
   name: { type: String, required: true },
