@@ -4,7 +4,8 @@ import corail from 'corail';
 import Router from '@koa/router';
 import * as Auth from '@/services/auth';
 import { StatusError } from '@/utils/error';
-import { type } from '@/utils';
+import { isNil, type } from '@/utils';
+
 import GoogleAuth from './google';
 
 const DOMAIN = import.meta.env.VITE_DOMAIN;
@@ -14,11 +15,32 @@ export type TokenInfo = {
   originToken: string;
 };
 
-const checkTokenExist = (token?: string) => {
+const checkTokenExist = (token?: string): string => {
   if (type.isNil(token)) {
     throw new StatusError(401, 'Token not exist');
   }
   return token;
+};
+
+const checkVerifedToken = ({ refreshToken }: { refreshToken: string }) => {
+  const decoded = Auth.decodeRefreshToken(refreshToken);
+
+  if (type.isString(decoded)) {
+    throw new StatusError(401, `Failed to validate token: ${decoded}`);
+  }
+
+  return {
+    originToken: refreshToken,
+    payload: decoded,
+  };
+};
+
+const checkPayloadSatisfied = ({ payload, originToken }: TokenInfo) => {
+  if (isNil(payload.email) || isNil(payload.provider)) {
+    throw new StatusError(401, 'payload is wrong');
+  }
+
+  return { payload, originToken };
 };
 
 const checkUnusedToken = async (data: TokenInfo) => {
@@ -34,7 +56,8 @@ export const checkAuthorization = async (
 ): Promise<StatusError | Auth.TokenPayload> => {
   const result = await corail.railRight(
     checkUnusedToken,
-    Auth.verifyRefreshToken,
+    checkPayloadSatisfied,
+    checkVerifedToken,
     checkTokenExist
   )(refreshToken);
 
