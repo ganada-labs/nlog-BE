@@ -10,12 +10,12 @@ export const JWT_ACCESS_SECRET =
 export const JWT_REFRESH_SECRET =
   import.meta.env.VITE_JWT_REFRESH_SECRET ?? 'my_refresh_secret';
 
-export const generateAccessToken = (email: string, provider: string) =>
-  token.genToken({ email, provider }, JWT_ACCESS_SECRET, {
+export const generateAccessToken = (payload: TokenPayload) =>
+  token.genToken(payload, JWT_ACCESS_SECRET, {
     expiresIn: `${ACCESS_TOKEN_EXPIRES_IN}s`,
   });
 
-export const generateRefreshToken = (email: string, provider: string) =>
-  token.genToken({ email, provider }, JWT_REFRESH_SECRET, {
+export const generateRefreshToken = (payload: TokenPayload) =>
+  token.genToken(payload, JWT_REFRESH_SECRET, {
     expiresIn: `${REFRESH_TOKEN_EXPIRES_IN}s`,
   });

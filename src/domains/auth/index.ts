@@ -55,8 +55,8 @@ export const isRefreshTokenExist = (refreshToken?: string) => {
 };
 
 export const generateTokens = (email: string, provider: string) => {
-  const accessToken = generateAccessToken(email, provider);
-  const refreshToken = generateRefreshToken(email, provider);
+  const accessToken = generateAccessToken({ email, provider });
+  const refreshToken = generateRefreshToken({ email, provider });
 
   return {
     accessToken,

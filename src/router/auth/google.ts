@@ -68,7 +68,10 @@ GoogleAuth.get(
       await signup({ email: userEmail, name: userName });
     }
 
-    const refreshToken = Auth.generateRefreshToken(userEmail, provider);
+    const refreshToken = Auth.generateRefreshToken({
+      email: userEmail,
+      provider,
+    });
 
     const success = await saveRefreshToken(userEmail, refreshToken);
 
