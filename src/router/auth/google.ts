@@ -3,7 +3,7 @@ import passport from 'koa-passport';
 import AuthModel from '@/models/auth';
 import UserModel, { type UserSchema } from '@/models/user';
 import { isEmail } from '@/utils';
-import * as Auth from '@/domains/auth';
+import * as Auth from '@/services/auth';
 
 type UserRaw = {
   displayName: string;

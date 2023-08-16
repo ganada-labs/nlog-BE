@@ -2,7 +2,7 @@ import { Next, type Context } from 'koa';
 import corail from 'corail';
 
 import Router from '@koa/router';
-import * as Auth from '@/domains/auth';
+import * as Auth from '@/services/auth';
 import { StatusError } from '@/utils/error';
 import { type } from '@/utils';
 import GoogleAuth from './google';
