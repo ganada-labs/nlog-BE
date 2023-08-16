@@ -1,4 +1,5 @@
 import { token } from '@/utils';
+import TokenModel from '@/models/auth';
 
 export type TokenPayload = { email: string; provider: string };
 
@@ -19,3 +20,7 @@ export const generateRefreshToken = (payload: TokenPayload) =>
   token.genToken(payload, JWT_REFRESH_SECRET, {
     expiresIn: `${REFRESH_TOKEN_EXPIRES_IN}s`,
   });
+
+export const saveToken = async (email: string, refreshToken: string) => {
+  await TokenModel.set({ email }, refreshToken);
+};

@@ -49,10 +49,6 @@ export const isRefreshTokenExist = (refreshToken?: string) => {
   return refreshToken;
 };
 
-export const saveToken = async (email: string, refreshToken: string) => {
-  await TokenModel.set({ email }, refreshToken);
-};
-
 export const checkAuthorization = async (
   refreshToken?: string
 ): Promise<StatusError | TokenInfo> => {
