@@ -1,5 +1,5 @@
 import Router from '@koa/router';
-import passport from 'koa-passport';
+import passport from '@/middlewares/passport';
 import AuthModel from '@/models/auth';
 import UserModel, { type UserSchema } from '@/models/user';
 import { isEmail } from '@/utils';
