@@ -4,7 +4,7 @@ import corail from 'corail';
 import Router from '@koa/router';
 import * as Auth from '@/services/auth';
 import { StatusError } from '@/utils/error';
-import { isNil, type } from '@/utils';
+import { isNil, isString } from '@/utils';
 
 import GoogleAuth from './google';
 
@@ -16,7 +16,7 @@ export type TokenInfo = {
 };
 
 const checkTokenExist = (token?: string): string => {
-  if (type.isNil(token)) {
+  if (isNil(token)) {
     throw new StatusError(401, 'Token not exist');
   }
   return token;
@@ -25,7 +25,7 @@ const checkTokenExist = (token?: string): string => {
 const checkVerifedToken = ({ refreshToken }: { refreshToken: string }) => {
   const decoded = Auth.decodeRefreshToken(refreshToken);
 
-  if (type.isString(decoded)) {
+  if (isString(decoded)) {
     throw new StatusError(401, `Failed to validate token: ${decoded}`);
   }
 
