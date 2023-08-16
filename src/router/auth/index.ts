@@ -15,7 +15,7 @@ export type TokenInfo = Auth.TokenPayload & {
 
 const checkTokenExist = (token?: string) => {
   if (type.isNil(token)) {
-    throw new StatusError(401, '토큰이 없음');
+    throw new StatusError(401, 'Token not exist');
   }
   return token;
 };
