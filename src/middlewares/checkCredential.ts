@@ -43,7 +43,7 @@ const checkPayloadSatisfied = ({ payload, originToken }: TokenInfo) => {
 
 const checkUnusedToken = async ({ payload, originToken }: TokenInfo) => {
   if (await Auth.isUnusedToken(payload.email, originToken)) {
-    throw new StatusError(403, 'Token is already unsed');
+    throw new StatusError(403, 'Token is already used');
   }
 
   return payload;
