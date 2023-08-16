@@ -28,13 +28,13 @@ export const saveToken = async (email: string, refreshToken: string) => {
 export const decodeRefreshToken = (refreshToken: string) =>
   token.verify(refreshToken, JWT_REFRESH_SECRET);
 
-export const isUnusedToken = async (email: string, tokenStr: string) => {
+export const isUsedToken = async (email: string, tokenStr: string) => {
   const savedToken = await TokenModel.get({ email });
   if (isNil(savedToken) || tokenStr !== savedToken) {
-    return false;
+    return true;
   }
 
-  return true;
+  return false;
 };
 
 export const isPayloadSatisfied = (
