@@ -3,23 +3,22 @@ import corail from 'corail';
 import TokenModel from '@/models/auth';
 import { StatusError } from '@/utils/error';
 import { isNil, type, token } from '@/utils';
-
-export const ACCESS_TOKEN_EXPIRES_IN = 3600; // 1 hour
-export const REFRESH_TOKEN_EXPIRES_IN = 3600 * 24 * 14; // 14 day
-
-export const JWT_ACCESS_SECRET =
-  import.meta.env.VITE_JWT_ACCESS_SECRET ?? 'my_access_secret';
-export const JWT_REFRESH_SECRET =
-  import.meta.env.VITE_JWT_REFRESH_SECRET ?? 'my_refresh_secret';
+import {
+  generateAccessToken,
+  generateRefreshToken,
+  type TokenPayload,
+  JWT_REFRESH_SECRET,
+} from './token';
 /**
  * TODO: strategies auth 도메인으로 옮기기
  * network 관련 로직 분리
  * passport를 auth 도메인으로 이동
  */
-export type TokenPayload = { email: string; provider: string };
 export type TokenInfo = TokenPayload & {
   refreshToken: string;
 };
+
+export * from './token';
 
 export const isUnusedToken = async (tokenInfo: TokenInfo) => {
   const savedToken = await TokenModel.get({ email: tokenInfo.email });
@@ -54,16 +53,6 @@ export const isRefreshTokenExist = (refreshToken?: string) => {
   }
   return refreshToken;
 };
-
-export const generateAccessToken = (email: string, provider: string) =>
-  token.genToken({ email, provider }, JWT_ACCESS_SECRET, {
-    expiresIn: `${ACCESS_TOKEN_EXPIRES_IN}s`,
-  });
-
-export const generateRefreshToken = (email: string, provider: string) =>
-  token.genToken({ email, provider }, JWT_REFRESH_SECRET, {
-    expiresIn: `${REFRESH_TOKEN_EXPIRES_IN}s`,
-  });
 
 export const generateTokens = (email: string, provider: string) => {
   const accessToken = generateAccessToken(email, provider);
