@@ -1,7 +1,7 @@
 import TokenModel from '@/models/auth';
 import { StatusError } from '@/utils/error';
-import { isNil, type, token } from '@/utils';
-import { JWT_REFRESH_SECRET, TokenPayload } from './token';
+import { isNil, type } from '@/utils';
+import { TokenPayload, decodeRefreshToken } from './token';
 /**
  * TODO: strategies auth 도메인으로 옮기기
  * network 관련 로직 분리
@@ -24,7 +24,7 @@ export const isUnusedToken = async (tokenInfo: TokenInfo) => {
 };
 
 export const verifyRefreshToken = (refreshToken: string) => {
-  const decoded = token.verify(refreshToken, JWT_REFRESH_SECRET);
+  const decoded = decodeRefreshToken(refreshToken);
 
   if (type.isString(decoded)) {
     throw new StatusError(401, `토큰이 잘못됨: ${decoded}`);

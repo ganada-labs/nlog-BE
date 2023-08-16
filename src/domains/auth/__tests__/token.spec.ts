@@ -1,12 +1,17 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import TokenModel from '@/models/auth';
+import { type } from '@/utils';
 import * as token from '../token';
 
-vi.mock('@/models/auth', () => {
+vi.mock('@/models/auth', async (importOriginal) => {
+  const origin = (await importOriginal()) as object;
   const set = vi.fn();
 
   return {
-    set,
+    default: {
+      ...origin,
+      set,
+    },
   };
 });
 
@@ -52,5 +57,18 @@ describe('token', () => {
     );
   });
 
-  it.todo('토큰을 검증할 수 있다');
+  it('리프레시 토큰을 해석할 수 있다', () => {
+    const { payload } = setup();
+
+    const refreshToken = token.generateRefreshToken(payload);
+    const decoded = token.decodeRefreshToken(refreshToken);
+
+    expect(type.isString(decoded)).toBe(false);
+
+    const maybePayload = !type.isString(decoded) && {
+      email: decoded.email,
+      provider: decoded.provider,
+    };
+    expect(maybePayload).toStrictEqual(payload);
+  });
 });
