@@ -40,10 +40,3 @@ export const verifyRefreshToken = (refreshToken: string) => {
     provider: decoded.provider,
   };
 };
-
-export const isRefreshTokenExist = (refreshToken?: string) => {
-  if (refreshToken === '') {
-    throw new StatusError(401, '토큰이 없음');
-  }
-  return refreshToken;
-};

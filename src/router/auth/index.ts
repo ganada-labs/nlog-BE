@@ -4,6 +4,7 @@ import corail from 'corail';
 import Router from '@koa/router';
 import * as Auth from '@/domains/auth';
 import { StatusError } from '@/utils/error';
+import { type } from '@/utils';
 import GoogleAuth from './google';
 
 const DOMAIN = import.meta.env.VITE_DOMAIN;
@@ -12,13 +13,20 @@ export type TokenInfo = Auth.TokenPayload & {
   refreshToken: string;
 };
 
+const checkTokenExist = (token?: string) => {
+  if (type.isNil(token)) {
+    throw new StatusError(401, '토큰이 없음');
+  }
+  return token;
+};
+
 export const checkAuthorization = async (
   refreshToken?: string
 ): Promise<StatusError | TokenInfo> => {
   const result = await corail.railRight(
     Auth.isUnusedToken,
     Auth.verifyRefreshToken,
-    Auth.isRefreshTokenExist
+    checkTokenExist
   )(refreshToken);
 
   if (corail.isFailed(result)) {
