@@ -36,7 +36,7 @@ const checkVerifedToken = ({ refreshToken }: { refreshToken: string }) => {
 };
 
 const checkPayloadSatisfied = ({ payload, originToken }: TokenInfo) => {
-  if (isNil(payload.email) || isNil(payload.provider)) {
+  if (Auth.isPayloadSatisfied(payload)) {
     throw new StatusError(401, 'payload is wrong');
   }
 
