@@ -10,11 +10,14 @@ export type TokenInfo = {
   originToken: string;
 };
 
-const checkTokenExist = (token?: string): string => {
-  if (isNil(token)) {
+const checkRefreshTokenExist = (
+  refreshToken?: string
+): { refreshToken: string } => {
+  if (isNil(refreshToken)) {
     throw new StatusError(401, 'Token not exist');
   }
-  return token;
+
+  return { refreshToken };
 };
 
 const checkVerifedToken = ({ refreshToken }: { refreshToken: string }) => {
@@ -38,12 +41,12 @@ const checkPayloadSatisfied = ({ payload, originToken }: TokenInfo) => {
   return { payload, originToken };
 };
 
-const checkUnusedToken = async (data: TokenInfo) => {
-  if (await Auth.isUnusedToken(data.payload.email, data.originToken)) {
+const checkUnusedToken = async ({ payload, originToken }: TokenInfo) => {
+  if (await Auth.isUnusedToken(payload.email, originToken)) {
     throw new StatusError(403, 'Token is already unsed');
   }
 
-  return data.payload;
+  return payload;
 };
 
 export const checkRefreshCredential = async (ctx: Context, next: Next) => {
@@ -53,7 +56,7 @@ export const checkRefreshCredential = async (ctx: Context, next: Next) => {
     checkUnusedToken,
     checkPayloadSatisfied,
     checkVerifedToken,
-    checkTokenExist
+    checkRefreshTokenExist
   )(refreshToken);
 
   if (corail.isFailed(result)) {
