@@ -1,15 +1,14 @@
-import corail from 'corail';
-
 import TokenModel from '@/models/auth';
 import { StatusError } from '@/utils/error';
 import { isNil, type, token } from '@/utils';
-import { type TokenPayload, JWT_REFRESH_SECRET } from './token';
+import { JWT_REFRESH_SECRET, TokenPayload } from './token';
 /**
  * TODO: strategies auth 도메인으로 옮기기
  * network 관련 로직 분리
  * passport를 auth 도메인으로 이동
  */
-export type TokenInfo = TokenPayload & {
+
+type TokenInfo = TokenPayload & {
   refreshToken: string;
 };
 
@@ -47,20 +46,4 @@ export const isRefreshTokenExist = (refreshToken?: string) => {
     throw new StatusError(401, '토큰이 없음');
   }
   return refreshToken;
-};
-
-export const checkAuthorization = async (
-  refreshToken?: string
-): Promise<StatusError | TokenInfo> => {
-  const result = await corail.railRight(
-    isUnusedToken,
-    verifyRefreshToken,
-    isRefreshTokenExist
-  )(refreshToken);
-
-  if (corail.isFailed(result)) {
-    return result.err;
-  }
-
-  return result;
 };

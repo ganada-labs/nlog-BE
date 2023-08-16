@@ -1,4 +1,5 @@
 import { Next, type Context } from 'koa';
+import corail from 'corail';
 
 import Router from '@koa/router';
 import * as Auth from '@/domains/auth';
@@ -6,6 +7,26 @@ import { StatusError } from '@/utils/error';
 import GoogleAuth from './google';
 
 const DOMAIN = import.meta.env.VITE_DOMAIN;
+
+export type TokenInfo = Auth.TokenPayload & {
+  refreshToken: string;
+};
+
+export const checkAuthorization = async (
+  refreshToken?: string
+): Promise<StatusError | TokenInfo> => {
+  const result = await corail.railRight(
+    Auth.isUnusedToken,
+    Auth.verifyRefreshToken,
+    Auth.isRefreshTokenExist
+  )(refreshToken);
+
+  if (corail.isFailed(result)) {
+    return result.err;
+  }
+
+  return result;
+};
 
 const auth = new Router({ prefix: '/auth' });
 /**
@@ -20,7 +41,7 @@ auth.use('/google', GoogleAuth.routes());
 
 const verifyRequest = async (ctx: Context, next: Next) => {
   const refreshToken = ctx.cookies.get('refresh_token');
-  const result = await Auth.checkAuthorization(refreshToken);
+  const result = await checkAuthorization(refreshToken);
 
   if (result instanceof StatusError) {
     ctx.throw(result.status, result.message);
