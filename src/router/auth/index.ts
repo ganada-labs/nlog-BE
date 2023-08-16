@@ -51,23 +51,6 @@ const checkUnusedToken = async (data: TokenInfo) => {
   return data.payload;
 };
 
-export const checkAuthorization = async (
-  refreshToken?: string
-): Promise<StatusError | Auth.TokenPayload> => {
-  const result = await corail.railRight(
-    checkUnusedToken,
-    checkPayloadSatisfied,
-    checkVerifedToken,
-    checkTokenExist
-  )(refreshToken);
-
-  if (corail.isFailed(result)) {
-    return result.err;
-  }
-
-  return result;
-};
-
 const auth = new Router({ prefix: '/auth' });
 /**
  * @api {get} /auth/google Google Login
@@ -79,20 +62,23 @@ const auth = new Router({ prefix: '/auth' });
  */
 auth.use('/google', GoogleAuth.routes());
 
-const verifyRequest = async (ctx: Context, next: Next) => {
+const checkCredential = async (ctx: Context, next: Next) => {
   const refreshToken = ctx.cookies.get('refresh_token');
-  const result = await checkAuthorization(refreshToken);
 
-  if (result instanceof StatusError) {
-    ctx.throw(result.status, result.message);
+  const result = await corail.railRight(
+    checkUnusedToken,
+    checkPayloadSatisfied,
+    checkVerifedToken,
+    checkTokenExist
+  )(refreshToken);
+
+  if (corail.isFailed(result)) {
+    const error = result.err as StatusError;
+    ctx.throw(error.status, error.message);
   }
 
-  const { email, provider } = result;
+  ctx.state.user = result;
 
-  ctx.state.user = {
-    email,
-    provider,
-  };
   await next();
 };
 
@@ -128,6 +114,6 @@ const refresh = async (ctx: Context) => {
  * @apiSuccess {String} accessToken 액세스 토큰
  * @apiSuccess {String} refreshToken 리프레시 토큰
  */
-auth.get('/refresh', verifyRequest, refresh);
+auth.get('/refresh', checkCredential, refresh);
 
 export default auth;
