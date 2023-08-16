@@ -1,55 +1,11 @@
-import { Next, type Context } from 'koa';
-import corail from 'corail';
-
+import { type Context } from 'koa';
 import Router from '@koa/router';
 import * as Auth from '@/services/auth';
-import { StatusError } from '@/utils/error';
-import { isNil, isString } from '@/utils';
+import { checkRefreshCredential } from '@/middlewares/checkCredential';
 
 import GoogleAuth from './google';
 
 const DOMAIN = import.meta.env.VITE_DOMAIN;
-
-export type TokenInfo = {
-  payload: Auth.TokenPayload;
-  originToken: string;
-};
-
-const checkTokenExist = (token?: string): string => {
-  if (isNil(token)) {
-    throw new StatusError(401, 'Token not exist');
-  }
-  return token;
-};
-
-const checkVerifedToken = ({ refreshToken }: { refreshToken: string }) => {
-  const decoded = Auth.decodeRefreshToken(refreshToken);
-
-  if (isString(decoded)) {
-    throw new StatusError(401, `Failed to validate token: ${decoded}`);
-  }
-
-  return {
-    originToken: refreshToken,
-    payload: decoded,
-  };
-};
-
-const checkPayloadSatisfied = ({ payload, originToken }: TokenInfo) => {
-  if (Auth.isPayloadSatisfied(payload)) {
-    throw new StatusError(401, 'payload is wrong');
-  }
-
-  return { payload, originToken };
-};
-
-const checkUnusedToken = async (data: TokenInfo) => {
-  if (await Auth.isUnusedToken(data.payload.email, data.originToken)) {
-    throw new StatusError(403, 'Token is already unsed');
-  }
-
-  return data.payload;
-};
 
 const auth = new Router({ prefix: '/auth' });
 /**
@@ -62,27 +18,19 @@ const auth = new Router({ prefix: '/auth' });
  */
 auth.use('/google', GoogleAuth.routes());
 
-const checkCredential = async (ctx: Context, next: Next) => {
-  const refreshToken = ctx.cookies.get('refresh_token');
-
-  const result = await corail.railRight(
-    checkUnusedToken,
-    checkPayloadSatisfied,
-    checkVerifedToken,
-    checkTokenExist
-  )(refreshToken);
-
-  if (corail.isFailed(result)) {
-    const error = result.err as StatusError;
-    ctx.throw(error.status, error.message);
-  }
-
-  ctx.state.user = result;
-
-  await next();
-};
-
-const refresh = async (ctx: Context) => {
+/**
+ * @api {get} /auth/refresh Refresh
+ * @apiDescription 토큰 만료시 토큰을 재발급할 수 있는 API
+ * Access Token은 반환값으로, Refresh Token은 Cookie로 설정되어 반환된다.
+ *
+ * @apiVersion 0.1.0
+ * @apiName refresh
+ * @apiGroup Auth
+ * @apiHeader {String} authorization Bearer 토큰 스트링, 리프레시 토큰을 Authorization Header로 넘길 것
+ * @apiSuccess {String} accessToken 액세스 토큰
+ * @apiSuccess {String} refreshToken 리프레시 토큰
+ */
+auth.get('/refresh', checkRefreshCredential, async (ctx: Context) => {
   const { email, provider } = ctx.state.user;
 
   const payload = { email, provider };
@@ -101,19 +49,6 @@ const refresh = async (ctx: Context) => {
   ctx.body = {
     accessToken,
   };
-};
-/**
- * @api {get} /auth/refresh Refresh
- * @apiDescription 토큰 만료시 토큰을 재발급할 수 있는 API
- * Access Token은 반환값으로, Refresh Token은 Cookie로 설정되어 반환된다.
- *
- * @apiVersion 0.1.0
- * @apiName refresh
- * @apiGroup Auth
- * @apiHeader {String} authorization Bearer 토큰 스트링, 리프레시 토큰을 Authorization Header로 넘길 것
- * @apiSuccess {String} accessToken 액세스 토큰
- * @apiSuccess {String} refreshToken 리프레시 토큰
- */
-auth.get('/refresh', checkCredential, refresh);
+});
 
 export default auth;
