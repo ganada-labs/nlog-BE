@@ -9,7 +9,7 @@ export type TokenInfo = {
   originToken: string;
 };
 
-const checkRefreshTokenExist = (
+export const checkRefreshTokenExist = (
   refreshToken?: string
 ): { refreshToken: string } => {
   if (isNil(refreshToken)) {
@@ -19,7 +19,11 @@ const checkRefreshTokenExist = (
   return { refreshToken };
 };
 
-const checkVerifedToken = ({ refreshToken }: { refreshToken: string }) => {
+export const checkVerifedToken = ({
+  refreshToken,
+}: {
+  refreshToken: string;
+}) => {
   const decoded = Auth.decodeRefreshToken(refreshToken);
 
   if (isString(decoded)) {
@@ -32,7 +36,7 @@ const checkVerifedToken = ({ refreshToken }: { refreshToken: string }) => {
   };
 };
 
-const checkPayloadSatisfied = ({ payload, originToken }: TokenInfo) => {
+export const checkPayloadSatisfied = ({ payload, originToken }: TokenInfo) => {
   if (Auth.isPayloadSatisfied(payload)) {
     throw new StatusError(401, 'payload is wrong');
   }
@@ -40,7 +44,7 @@ const checkPayloadSatisfied = ({ payload, originToken }: TokenInfo) => {
   return { payload, originToken };
 };
 
-const checkUnusedToken = async ({ payload, originToken }: TokenInfo) => {
+export const checkUnusedToken = async ({ payload, originToken }: TokenInfo) => {
   if (await Auth.isUsedToken(payload.email, originToken)) {
     throw new StatusError(403, 'Token is already used');
   }
