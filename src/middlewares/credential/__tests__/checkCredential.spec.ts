@@ -15,7 +15,7 @@ const setup = () => {
 };
 
 describe('checkRefreshTokenExist', () => {
-  it('should check cookie exist', async () => {
+  it('should check token exist', async () => {
     const { refreshToken } = setup();
 
     expect(() => {
