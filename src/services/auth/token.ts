@@ -30,6 +30,7 @@ export const decodeRefreshToken = (refreshToken: string) =>
 
 export const isUsedToken = async (email: string, tokenStr: string) => {
   const savedToken = await TokenModel.get({ email });
+
   if (isNil(savedToken) || tokenStr !== savedToken) {
     return true;
   }
