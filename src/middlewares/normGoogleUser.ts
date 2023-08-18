@@ -34,11 +34,6 @@ export const normGoogleUser = async (ctx: Context, next: Next) => {
     return;
   }
 
-  const { userEmail, userName } = result;
-  if (await User.isNotSigned(userEmail)) {
-    await User.signup({ email: userEmail, name: userName });
-  }
-
   ctx.state.user = result;
   await next();
 };

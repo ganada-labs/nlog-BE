@@ -1,7 +1,8 @@
 import Router from '@koa/router';
 import passport from '@/middlewares/passport';
+import { signupIfNotSigned } from '@/middlewares/user';
 import { normGoogleUser } from '@/middlewares/normGoogleUser';
-import { saveRefreshToken } from '@/middlewares/saveRefreshToken';
+import { saveRefreshToken } from '@/middlewares/token';
 import * as Auth from '@/services/auth';
 
 const OAUTH_REDIRECT_URL = import.meta.env.VITE_OAUTH_REDIRECT_URL;
@@ -26,6 +27,7 @@ GoogleAuth.get(
     failureRedirect: '/callback/failure',
   }),
   normGoogleUser,
+  signupIfNotSigned,
   saveRefreshToken,
   async (ctx) => {
     const { refreshToken } = ctx;
