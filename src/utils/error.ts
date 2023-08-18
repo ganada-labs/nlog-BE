@@ -1,4 +1,4 @@
-export type Status = 200 | 401 | 403;
+export type Status = 200 | 401 | 403 | 500;
 
 // 불변 객체
 export class StatusError extends Error {

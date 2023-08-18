@@ -17,10 +17,19 @@ vi.mock('@/models/user', async (importOriginal) => {
 const setup = () => {
   const email = 'user@example.com';
   const name = 'john doe';
+  const provider = 'example';
+
+  const rawUserData = {
+    displayName: name,
+    emails: [{ value: email, verified: true }],
+    provider,
+  };
 
   return {
     email,
     name,
+    provider,
+    rawUserData,
   };
 };
 
@@ -49,5 +58,28 @@ describe('signup', () => {
 
     await user.signup({ email, name });
     expect(spy).toBeCalled();
+  });
+});
+
+describe('normalizeUser', () => {
+  it('should normalize raw user data from google', async () => {
+    const { rawUserData, email, name, provider } = setup();
+
+    const result = user.normalizeUser(rawUserData);
+    expect(result).toEqual({
+      userName: name,
+      userEmail: email,
+      provider,
+    });
+  });
+});
+
+describe('isEmailNotExist', () => {
+  it('should return email existance', async () => {
+    const { email } = setup();
+
+    expect(user.isEmailNotExist(email)).toBe(false);
+    expect(user.isEmailNotExist('')).toBe(true);
+    expect(user.isEmailNotExist(undefined)).toBe(true);
   });
 });
