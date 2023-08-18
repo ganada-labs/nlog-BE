@@ -1,8 +1,8 @@
 import Router from '@koa/router';
 import passport from '@/middlewares/passport';
-import UserModel, { type UserSchema } from '@/models/user';
 import { isEmail } from '@/utils';
 import * as Auth from '@/services/auth';
+import * as User from '@/services/user';
 
 type UserRaw = {
   displayName: string;
@@ -27,11 +27,6 @@ const normalizeUser = (raw: UserRaw) => {
     provider,
   };
 };
-
-const isNotSigned = async (email: string) => !(await UserModel.read({ email }));
-
-const signup = ({ email, name }: UserSchema) =>
-  UserModel.create({ email, name });
 
 const GoogleAuth = new Router();
 
@@ -60,8 +55,8 @@ GoogleAuth.get(
       return;
     }
 
-    if (await isNotSigned(userEmail)) {
-      await signup({ email: userEmail, name: userName });
+    if (await User.isNotSigned(userEmail)) {
+      await User.signup({ email: userEmail, name: userName });
     }
 
     const refreshToken = Auth.generateRefreshToken({
