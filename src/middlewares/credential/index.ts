@@ -37,7 +37,7 @@ export const checkVerifedToken = ({
 };
 
 export const checkPayloadSatisfied = ({ payload, originToken }: TokenInfo) => {
-  if (Auth.isPayloadSatisfied(payload)) {
+  if (!Auth.isPayloadSatisfied(payload)) {
     throw new StatusError(401, 'payload is wrong');
   }
 

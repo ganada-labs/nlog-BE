@@ -39,4 +39,4 @@ export const isUsedToken = async (email: string, tokenStr: string) => {
 
 export const isPayloadSatisfied = (
   payload: Record<string, string>
-): payload is TokenPayload => isNil(payload.email) || isNil(payload.provider);
+): payload is TokenPayload => !isNil(payload.email) && !isNil(payload.provider);
