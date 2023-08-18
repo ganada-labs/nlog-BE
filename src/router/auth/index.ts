@@ -1,7 +1,7 @@
 import { type Context } from 'koa';
 import Router from '@koa/router';
 import * as Auth from '@/services/auth';
-import { checkRefreshCredential } from '@/middlewares/checkCredential';
+import { checkRefreshCredential } from '@/middlewares/credential';
 
 import GoogleAuth from './google';
 

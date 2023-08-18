@@ -21,15 +21,15 @@ export const generateRefreshToken = (payload: TokenPayload) =>
     expiresIn: `${REFRESH_TOKEN_EXPIRES_IN}s`,
   });
 
-export const saveToken = async (email: string, refreshToken: string) => {
-  await TokenModel.set({ email }, refreshToken);
-};
+export const saveToken = async (email: string, refreshToken: string) =>
+  TokenModel.set({ email }, refreshToken);
 
 export const decodeRefreshToken = (refreshToken: string) =>
   token.verify(refreshToken, JWT_REFRESH_SECRET);
 
 export const isUsedToken = async (email: string, tokenStr: string) => {
   const savedToken = await TokenModel.get({ email });
+
   if (isNil(savedToken) || tokenStr !== savedToken) {
     return true;
   }
@@ -39,4 +39,4 @@ export const isUsedToken = async (email: string, tokenStr: string) => {
 
 export const isPayloadSatisfied = (
   payload: Record<string, string>
-): payload is TokenPayload => isNil(payload.email) || isNil(payload.provider);
+): payload is TokenPayload => !isNil(payload.email) && !isNil(payload.provider);
