@@ -1,6 +1,5 @@
 import Router from '@koa/router';
 import passport from '@/middlewares/passport';
-import AuthModel from '@/models/auth';
 import UserModel, { type UserSchema } from '@/models/user';
 import { isEmail } from '@/utils';
 import * as Auth from '@/services/auth';
@@ -33,9 +32,6 @@ const isNotSigned = async (email: string) => !(await UserModel.read({ email }));
 
 const signup = ({ email, name }: UserSchema) =>
   UserModel.create({ email, name });
-
-const saveRefreshToken = (email: string, tokenStr: string) =>
-  AuthModel.set({ email }, tokenStr);
 
 const GoogleAuth = new Router();
 
@@ -73,7 +69,7 @@ GoogleAuth.get(
       provider,
     });
 
-    const success = await saveRefreshToken(userEmail, refreshToken);
+    const success = await Auth.saveToken(userEmail, refreshToken);
 
     if (!success) {
       const message = 'failed to save user session';

@@ -21,9 +21,8 @@ export const generateRefreshToken = (payload: TokenPayload) =>
     expiresIn: `${REFRESH_TOKEN_EXPIRES_IN}s`,
   });
 
-export const saveToken = async (email: string, refreshToken: string) => {
-  await TokenModel.set({ email }, refreshToken);
-};
+export const saveToken = async (email: string, refreshToken: string) =>
+  TokenModel.set({ email }, refreshToken);
 
 export const decodeRefreshToken = (refreshToken: string) =>
   token.verify(refreshToken, JWT_REFRESH_SECRET);
