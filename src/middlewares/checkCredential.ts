@@ -1,7 +1,6 @@
 import { Next, type Context } from 'koa';
-import corail from 'corail';
+import corail from '@/packages/corail';
 import * as Auth from '@/services/auth';
-
 import { StatusError } from '@/utils/error';
 import { isNil, isString } from '@/utils';
 
