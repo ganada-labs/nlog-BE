@@ -41,6 +41,7 @@
     "object-curly-newline": "off", // { , , , } 형태의 object를 여러줄로 개행하는 것을 허용함
     "implicit-arrow-linebreak": "off",
     "operator-linebreak": "off",
-    "function-paren-newline": "off"
+    "function-paren-newline": "off",
+    "import/prefer-default-export": "off"
   }
 }
