@@ -1,11 +1,10 @@
 import Router from '@koa/router';
 import passport from '@/middlewares/passport';
-import * as Auth from '@/services/auth';
 import { normGoogleUser } from '@/middlewares/normGoogleUser';
 import { saveRefreshToken } from '@/middlewares/saveRefreshToken';
+import { setRefreshTokenCookie } from '@/middlewares/setRefreshTokenCookie';
 
 const OAUTH_REDIRECT_URL = import.meta.env.VITE_OAUTH_REDIRECT_URL;
-const DOMAIN = import.meta.env.VITE_DOMAIN;
 
 const GoogleAuth = new Router();
 
@@ -27,19 +26,7 @@ GoogleAuth.get(
   }),
   normGoogleUser,
   saveRefreshToken,
-  async (ctx) => {
-    const { refreshToken } = ctx;
-
-    ctx.cookies.set('refresh_token', refreshToken, {
-      httpOnly: true,
-      domain: DOMAIN,
-      maxAge: Auth.REFRESH_TOKEN_EXPIRES_IN * 1000,
-      sameSite: 'strict',
-      path: '/',
-    });
-
-    ctx.redirect(OAUTH_REDIRECT_URL);
-  }
+  setRefreshTokenCookie
 );
 
 GoogleAuth.get('/callback/failure', (ctx) => {
