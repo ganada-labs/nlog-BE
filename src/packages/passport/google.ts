@@ -1,8 +1,10 @@
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 
-const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID ?? '';
-const GOOGLE_CLIENT_SECRET = import.meta.env.VITE_GOOGLE_CLIENT_SECRET ?? '';
-const GOOGLE_CALLBACK_URL = import.meta.env.VITE_GOOGLE_CALLBACK_URL ?? '';
+const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID ?? 'client_id';
+const GOOGLE_CLIENT_SECRET =
+  import.meta.env.VITE_GOOGLE_CLIENT_SECRET ?? 'client_secret';
+const GOOGLE_CALLBACK_URL =
+  import.meta.env.VITE_GOOGLE_CALLBACK_URL ?? 'client_callback_url';
 
 const strategy = new GoogleStrategy(
   {

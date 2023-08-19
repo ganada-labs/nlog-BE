@@ -7,7 +7,8 @@ import {
 import UserModel from '@/models/user';
 import { isNil } from '@/utils';
 
-const JWT_ACCESS_SECRET = import.meta.env.VITE_JWT_ACCESS_SECRET;
+const JWT_ACCESS_SECRET =
+  import.meta.env.VITE_JWT_ACCESS_SECRET ?? 'token_secret';
 
 const option = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),

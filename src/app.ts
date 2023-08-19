@@ -3,7 +3,7 @@ import Router from '@koa/router';
 import cors from '@koa/cors';
 import Auth from '@/router/auth';
 import User from '@/router/user';
-import passport from '@/middlewares/passport';
+import { passport } from '@/packages/passport';
 import * as mongodb from '@/infrastructures/mongodb';
 import * as redis from '@/infrastructures/redis';
 

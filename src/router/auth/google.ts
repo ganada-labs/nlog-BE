@@ -1,5 +1,5 @@
 import Router from '@koa/router';
-import passport from '@/middlewares/passport';
+import { googleOAuth, googleOAuthCallback } from '@/middlewares/oauth';
 import { signupIfNotSigned } from '@/middlewares/user';
 import { normGoogleUser } from '@/middlewares/normGoogleUser';
 import { saveRefreshToken } from '@/middlewares/token';
@@ -10,22 +10,11 @@ const DOMAIN = import.meta.env.VITE_DOMAIN;
 
 const GoogleAuth = new Router();
 
-GoogleAuth.get(
-  '/',
-  passport.authenticate('google', {
-    session: false,
-    scope: ['profile', 'email'],
-    accessType: 'offline',
-    prompt: 'consent',
-  })
-);
+GoogleAuth.get('/', googleOAuth);
 
 GoogleAuth.get(
   '/callback',
-  passport.authenticate('google', {
-    session: false,
-    failureRedirect: '/callback/failure',
-  }),
+  googleOAuthCallback,
   normGoogleUser,
   signupIfNotSigned,
   saveRefreshToken,
