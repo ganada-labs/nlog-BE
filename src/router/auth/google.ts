@@ -1,5 +1,5 @@
 import Router from '@koa/router';
-import { googleOAuth, googleOAuthCallback } from '@/middlewares/credential';
+import { googleOAuth, googleOAuthCallback } from '@/middlewares/oauth';
 import { signupIfNotSigned } from '@/middlewares/user';
 import { normGoogleUser } from '@/middlewares/normGoogleUser';
 import { saveRefreshToken } from '@/middlewares/token';
