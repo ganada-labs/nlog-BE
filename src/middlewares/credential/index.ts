@@ -3,6 +3,7 @@ import corail from '@/packages/corail';
 import * as Auth from '@/services/auth';
 import { StatusError } from '@/utils/error';
 import { isNil, isString } from '@/utils';
+import { passport } from '@/packages/passport';
 
 export type TokenInfo = {
   payload: Auth.TokenPayload;
@@ -71,3 +72,19 @@ export const checkRefreshCredential = async (ctx: Context, next: Next) => {
 
   await next();
 };
+
+export const checkCredential = passport.authenticate('local', {
+  session: false,
+});
+
+export const googleOAuth = passport.authenticate('google', {
+  session: false,
+  scope: ['profile', 'email'],
+  accessType: 'offline',
+  prompt: 'consent',
+});
+
+export const googleOAuthCallback = passport.authenticate('google', {
+  session: false,
+  failureRedirect: '/callback/failure',
+});
