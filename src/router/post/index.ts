@@ -101,4 +101,36 @@ post.delete('/', checkCredential, koaBody(), async (ctx: Context) => {
   ctx.status = 200;
 });
 
+/**
+ * @api {patch} /post Update Post
+ * @apiDescription 포스트를 수정하는 API
+ * body에 id 정보를 전달하면 해당하는 post를 수정한다.
+ *
+ * @apiBody {String} id 수정할 포스트의 id
+ * @apiBody {String} [title] 새 타이틀
+ * @apiVersion 0.1.0
+ * @apiGroup Post
+ * @apiHeader {String} authorization 인증 토큰, Bearer 사용
+ */
+post.patch('/', checkCredential, koaBody(), async (ctx: Context) => {
+  const { id, title } = ctx.request.body;
+  const { email } = ctx.state.user;
+
+  const doc = await PostModel.read({ id });
+  if (!doc) {
+    ctx.throw(400, 'Bad Request');
+  }
+  if (!doc.meta || doc.meta.author !== email) {
+    ctx.throw(403, 'Forbidden');
+  }
+
+  await PostModel.update(
+    { id },
+    {
+      title,
+    }
+  );
+  ctx.status = 200;
+});
+
 export default post;
