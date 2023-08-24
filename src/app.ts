@@ -3,6 +3,7 @@ import Router from '@koa/router';
 import cors from '@koa/cors';
 import Auth from '@/router/auth';
 import User from '@/router/user';
+import Post from '@/router/post';
 import { passport } from '@/packages/passport';
 import * as mongodb from '@/infrastructures/mongodb';
 import * as redis from '@/infrastructures/redis';
@@ -40,9 +41,11 @@ app.use(
     credentials: true,
   })
 );
+
 app.use(router.routes());
 app.use(Auth.routes());
 app.use(User.routes());
+app.use(Post.routes());
 app.use(router.allowedMethods());
 
 export default app;
