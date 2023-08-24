@@ -74,4 +74,31 @@ post.get('/', async (ctx: Context) => {
   ctx.body = docs;
 });
 
+/**
+ * @api {delete} /post Delete Post
+ * @apiDescription 포스트를 제거하는 API
+ * body에 id 정보를 전달하면 해당하는 post를 제거한다.
+ *
+ * @apiParam {String} id 제거할 포스트의 id
+ * @apiVersion 0.1.0
+ * @apiGroup Post
+ * @apiHeader {String} authorization 인증 토큰, Bearer 사용
+ */
+post.delete('/', checkCredential, koaBody(), async (ctx: Context) => {
+  const { query } = ctx.request;
+  const { email } = ctx.state.user;
+  const { id } = query;
+
+  const doc = await PostModel.read({ id });
+  if (!doc) {
+    ctx.throw(400, 'Bad Request');
+  }
+  if (!doc.meta || doc.meta.author !== email) {
+    ctx.throw(403, 'Forbidden');
+  }
+
+  await PostModel.remove({ id });
+  ctx.status = 200;
+});
+
 export default post;
