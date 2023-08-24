@@ -1,5 +1,13 @@
-import { Schema, model } from '@/infrastructures/mongodb.ts';
-import type { CRUDable, Create, Read, Update, Remove } from './types.ts';
+import { Schema, model } from '@/infrastructures/mongodb';
+
+import type {
+  CRUDable,
+  Create,
+  Read,
+  ReadAll,
+  Update,
+  Remove,
+} from './types.ts';
 
 export interface MetaSchema {
   author: string;
@@ -65,6 +73,19 @@ const read: Read<PostSchema> = async (
   }
 };
 
+const readAll: ReadAll<PostSchema> = async (query, select?) => {
+  try {
+    const result = await PostModel.find(query, select);
+
+    return result;
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      console.error(err.message);
+    }
+    return [];
+  }
+};
+
 const update: Update<PostSchema> = async (
   query: Partial<PostSchema>,
   data: Partial<PostSchema>
@@ -97,6 +118,7 @@ const remove: Remove<PostSchema> = async (query: Partial<PostSchema>) => {
 export default {
   create,
   read,
+  readAll,
   update,
   remove,
 } satisfies CRUDable<PostSchema>;
