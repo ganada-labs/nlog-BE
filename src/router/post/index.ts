@@ -50,4 +50,28 @@ post.get('/:id', async (ctx: Context) => {
   ctx.body = doc;
 });
 
+/**
+ * @api {get} /post Read Post list
+ * @apiDescription 포스트 목록을 조회한다.
+ * 포스트 목록을 조회한다.
+ * 쿼리를 통해 특정 조건의 포스트만 조회할 수 있다.
+ * TODO: 페이지네이션을 적용한다.
+ *
+ * @apiParam {String} [author] 글 작성자의 이메일
+ * @apiVersion 0.1.0
+ * @apiGroup Post
+ */
+post.get('/', async (ctx: Context) => {
+  const { query } = ctx.request;
+
+  const filterOptions: Record<string, string | string[]> = {};
+  if (query.author) {
+    filterOptions['meta.author'] = query.author;
+  }
+  const docs = await PostModel.readAll(filterOptions);
+
+  ctx.status = 200;
+  ctx.body = docs;
+});
+
 export default post;
