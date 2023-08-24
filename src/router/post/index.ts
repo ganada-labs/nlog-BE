@@ -33,4 +33,21 @@ post.post('/', checkCredential, koaBody(), async (ctx: Context) => {
   ctx.status = 200;
 });
 
+/**
+ * @api {get} /post/:id Read Post
+ * @apiDescription 특정 id의 포스트를 조회한다. API
+ * 해당하는 id의 포스트를 읽고 반환한다.
+ *
+ * @apiVersion 0.1.0
+ * @apiGroup Post
+ */
+post.get('/:id', async (ctx: Context) => {
+  const { id } = ctx.params;
+
+  const doc = await PostModel.read({ id });
+
+  ctx.status = 200;
+  ctx.body = doc;
+});
+
 export default post;
