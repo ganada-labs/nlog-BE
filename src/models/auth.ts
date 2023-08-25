@@ -1,4 +1,4 @@
-import { client } from '@/infrastructures/redis';
+import { client } from '@/repos/redis';
 
 type Token = string;
 

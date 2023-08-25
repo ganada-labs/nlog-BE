@@ -1,4 +1,4 @@
-import { Schema, model } from '@/infrastructures/mongodb';
+import { Schema, model } from '@/repos/mongodb';
 
 import type {
   CRUDable,

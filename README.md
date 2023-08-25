@@ -11,7 +11,7 @@ https://ganada-labs.github.io/nlog-BE/
 ```bash
 📦src
 ├ 📂constants         # 상수
-├ 📂infrastructures   # DB등 외부 repository 추상화 (infra)
+├ 📂repos             # DB등 외부 repository 추상화 (infra)
 ├ 📂middlewares       # presentation 로직 모듈 모음 (presentation)
 ├ 📂models            # 스키마 등의 도메인 로직 모음 (domain)
 ├ 📂packages          # 외부 패키지의 추상화 (infra)
