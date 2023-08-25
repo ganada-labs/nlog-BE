@@ -6,7 +6,7 @@ export const isPostNotExist = (p?: Partial<PostSchema> | null): p is Nil =>
   isNil(p);
 
 export const isPostOwner = (email: string, metaInfo?: Partial<MetaSchema>) =>
-  !isNil(metaInfo) && metaInfo.author !== email;
+  !isNil(metaInfo) && metaInfo.author === email;
 
 export async function getPostList(query: { author?: string }) {
   return PostModel.readAll(query);
