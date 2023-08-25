@@ -1,5 +1,5 @@
 import { Schema, model } from '@/repos/mongodb';
-import type { CRUDable, Create, Read, Update, Remove } from './types';
+import type { CRUDable, Create, Read, Update, Remove } from '../types';
 
 export interface UserSchema {
   email: string;
@@ -34,10 +34,7 @@ const create: Create<UserSchema> = async (data: UserSchema) => {
   }
 };
 
-const read: Read<UserSchema> = async (
-  query: Partial<UserSchema>,
-  select?: Partial<UserSchema>
-) => {
+const read: Read<UserSchema> = async (query, select?) => {
   try {
     const result = await UserModel.findOne(query, select);
 
@@ -50,10 +47,7 @@ const read: Read<UserSchema> = async (
   }
 };
 
-const update: Update<UserSchema> = async (
-  query: Partial<UserSchema>,
-  data: Partial<UserSchema>
-) => {
+const update: Update<UserSchema> = async (query, data) => {
   try {
     await UserModel.updateOne(query, data);
 
@@ -66,7 +60,7 @@ const update: Update<UserSchema> = async (
   }
 };
 
-const remove: Remove<UserSchema> = async (query: Partial<UserSchema>) => {
+const remove: Remove<UserSchema> = async (query) => {
   try {
     await UserModel.deleteOne(query);
 

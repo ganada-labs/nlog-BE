@@ -1,13 +1,6 @@
 import { Schema, model } from '@/repos/mongodb';
 
-import type {
-  CRUDable,
-  Create,
-  Read,
-  ReadAll,
-  Update,
-  Remove,
-} from './types.ts';
+import type { CRUDable, Create, Read, ReadAll, Update, Remove } from '../types';
 
 export interface MetaSchema {
   author: string;
