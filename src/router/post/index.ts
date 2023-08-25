@@ -128,6 +128,7 @@ post.patch('/', checkCredential, koaBody(), async (ctx: Context) => {
     { id },
     {
       title,
+      'meta.modifiedAt': new Date(),
     }
   );
   ctx.status = 200;
