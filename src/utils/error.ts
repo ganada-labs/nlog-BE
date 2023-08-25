@@ -1,4 +1,4 @@
-export type Status = 200 | 401 | 403 | 500;
+export type Status = 200 | 400 | 401 | 403 | 500;
 /**
  * TODO: http-errors로 대체할 것
  */

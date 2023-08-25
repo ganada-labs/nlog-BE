@@ -17,6 +17,8 @@ import {
   removePostById,
   updatePostById,
 } from '@/services/post';
+import corail from '@/packages/corail';
+import { StatusError } from '@/utils/error';
 
 type PostQuery = {
   id?: string;
@@ -29,6 +31,97 @@ type PostBody = {
 };
 const post = new Router({ prefix: '/post' });
 
+const checkIdExist = (data: { id?: string; email: string }) => {
+  if (isNil(data.id)) {
+    throw new StatusError(400, 'Bad Request');
+  }
+
+  return data;
+};
+
+const getPost = async (data: { id: string; email: string }) => {
+  const targetPost = await getPostById(data.id);
+  if (isPostNotExist(targetPost)) {
+    throw new StatusError(400, 'Bad Request');
+  }
+
+  return {
+    ...data,
+    targetPost,
+  };
+};
+
+const checkHaveAuthority = (data: {
+  id: string;
+  targetPost: PostSchema;
+  email: string;
+}) => {
+  if (!isPostOwner(data.email, data.targetPost.meta)) {
+    throw new StatusError(403, 'Forbidden');
+  }
+
+  return data;
+};
+
+const removePost = async (data: {
+  id: string;
+  targetPost: PostSchema;
+  email: string;
+}) => {
+  await removePostById(data.id);
+};
+
+const updatePost = async (data: {
+  id: string;
+  contents: object[];
+  title: string;
+  query: object;
+}) => {
+  const isSuccess = await updatePostById(data.id, data.query);
+
+  if (!isSuccess) {
+    throw new StatusError(500, 'Internal Server Error');
+  }
+
+  return true;
+};
+const updateTitleQuery = (data: {
+  id: string;
+  contents: object[];
+  title: string;
+}) => {
+  const query = addTitleToQuery(data.title, {});
+  return {
+    ...data,
+    query,
+  };
+};
+
+const updateContentsQuery = (data: {
+  id: string;
+  contents: object[];
+  title: string;
+  query: object;
+}) => {
+  const query = addContentsToQuery(data.contents, data.query);
+  return {
+    ...data,
+    query,
+  };
+};
+
+function updateModifiedAtQuery(data: {
+  id: string;
+  contents: object[];
+  title: string;
+  query: object;
+}) {
+  const newQuery = addModifiedToQuery(new Date(), data.query);
+  return {
+    ...data,
+    query: newQuery,
+  };
+}
 /**
  * @api {get} /post/:id Read Post
  * @apiDescription 특정 id의 포스트를 조회한다. API
@@ -40,10 +133,15 @@ const post = new Router({ prefix: '/post' });
 post.get('/:id', async (ctx: Context) => {
   const { id } = ctx.params;
 
-  const targetPost = await getPostById(id);
+  const result = await corail.railRight(getPostById)(id);
+
+  if (corail.isFailed(result)) {
+    const error = result.err as StatusError;
+    ctx.throw(error.status, error.message);
+  }
 
   ctx.status = 200;
-  ctx.body = targetPost;
+  ctx.body = result;
 });
 
 /**
@@ -61,11 +159,15 @@ post.get('/', async (ctx: Context) => {
   const { query } = ctx.request;
   const { author } = query as PostQuery;
 
-  const filterQuery = addAuthorToQuery(author, {});
-  const posts = await getPostList(filterQuery);
+  const result = await corail.railRight(getPostList, addAuthorToQuery)(author);
+
+  if (corail.isFailed(result)) {
+    const error = result.err as StatusError;
+    ctx.throw(error.status, error.message);
+  }
 
   ctx.status = 200;
-  ctx.body = posts;
+  ctx.body = result;
 });
 
 /**
@@ -110,18 +212,17 @@ post.delete('/', checkCredential, koaBody(), async (ctx: Context) => {
   const { email } = ctx.state.user;
   const { id } = query as PostQuery;
 
-  if (isNil(id)) {
-    ctx.throw(400, 'Bad Request');
-  }
-  const targetPost = await getPostById(id);
-  if (isPostNotExist(targetPost)) {
-    ctx.throw(400, 'Bad Request');
-  }
-  if (!isPostOwner(email, targetPost.meta)) {
-    ctx.throw(403, 'Forbidden');
-  }
+  const result = await corail.railRight(
+    removePost,
+    checkHaveAuthority,
+    getPost,
+    checkIdExist
+  )({ id, email });
 
-  await removePostById(id);
+  if (corail.isFailed(result)) {
+    const error = result.err as StatusError;
+    ctx.throw(error.status, error.message);
+  }
 
   ctx.status = 200;
 });
@@ -141,23 +242,20 @@ post.patch('/', checkCredential, koaBody(), async (ctx: Context) => {
   const { id, title, contents } = ctx.request.body as PostBody;
   const { email } = ctx.state.user;
 
-  if (isNil(id)) {
-    ctx.throw(400, 'Bad Request');
-  }
-  const targetPost = await getPostById(id);
-  if (isPostNotExist(targetPost)) {
-    ctx.throw(400, 'Bad Request');
-  }
-  if (!isPostOwner(email, targetPost.meta)) {
-    ctx.throw(403, 'Forbidden');
-  }
+  const result = await corail.railRight(
+    updatePost,
+    updateModifiedAtQuery,
+    updateContentsQuery,
+    updateTitleQuery,
+    checkHaveAuthority,
+    getPost,
+    checkIdExist
+  )({ id, email, title, contents });
 
-  const updateQuery = addModifiedToQuery(
-    new Date(),
-    addContentsToQuery(contents, addTitleToQuery(title, {}))
-  );
-
-  await updatePostById(id, updateQuery);
+  if (corail.isFailed(result)) {
+    const error = result.err as StatusError;
+    ctx.throw(error.status, error.message);
+  }
   ctx.status = 200;
 });
 
