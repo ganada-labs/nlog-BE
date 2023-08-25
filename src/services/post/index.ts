@@ -26,3 +26,40 @@ export async function updatePostById(
 ) {
   return PostModel.update({ id }, updateQuery);
 }
+
+export const addAuthorToQuery = (author?: string, query = {}) => {
+  if (author) {
+    return {
+      ...query,
+      'meta.author': author,
+    };
+  }
+  return query;
+};
+export const addTitleToQuery = (title?: string, query = {}) => {
+  if (title) {
+    return {
+      ...query,
+      title,
+    };
+  }
+  return query;
+};
+export const addContentsToQuery = (contents?: object[], query = {}) => {
+  if (contents) {
+    return {
+      ...query,
+      contents,
+    };
+  }
+  return query;
+};
+export const addModifiedToQuery = (modifiedAt?: Date, query = {}) => {
+  if (modifiedAt) {
+    return {
+      ...query,
+      'meta.modifiedAt': modifiedAt,
+    };
+  }
+  return query;
+};

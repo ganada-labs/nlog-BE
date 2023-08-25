@@ -6,6 +6,10 @@ import { uid } from '@/packages/uid';
 import { checkCredential } from '@/middlewares/credential';
 import { isNil } from '@/utils';
 import {
+  addAuthorToQuery,
+  addContentsToQuery,
+  addModifiedToQuery,
+  addTitleToQuery,
   getPostById,
   getPostList,
   isPostNotExist,
@@ -19,47 +23,11 @@ type PostQuery = {
   author?: PostSchema['meta']['author'];
 };
 type PostBody = {
+  id?: string;
   contents?: object[];
   title?: string;
 };
 const post = new Router({ prefix: '/post' });
-
-const addAuthorToQuery = (author?: PostQuery['author'], query = {}) => {
-  if (author) {
-    return {
-      ...query,
-      'meta.author': author,
-    };
-  }
-  return query;
-};
-const addTitleToQuery = (title?: PostBody['title'], query = {}) => {
-  if (title) {
-    return {
-      ...query,
-      title,
-    };
-  }
-  return query;
-};
-const addContentsToQuery = (contents?: PostBody['contents'], query = {}) => {
-  if (contents) {
-    return {
-      ...query,
-      contents,
-    };
-  }
-  return query;
-};
-const addModifiedToQuery = (modifiedAt?: Date, query = {}) => {
-  if (modifiedAt) {
-    return {
-      ...query,
-      'meta.modifiedAt': modifiedAt,
-    };
-  }
-  return query;
-};
 
 /**
  * @api {get} /post/:id Read Post
@@ -170,7 +138,7 @@ post.delete('/', checkCredential, koaBody(), async (ctx: Context) => {
  * @apiHeader {String} authorization 인증 토큰, Bearer 사용
  */
 post.patch('/', checkCredential, koaBody(), async (ctx: Context) => {
-  const { id, title, contents } = ctx.request.body;
+  const { id, title, contents } = ctx.request.body as PostBody;
   const { email } = ctx.state.user;
 
   if (isNil(id)) {
