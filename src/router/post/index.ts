@@ -5,12 +5,76 @@ import PostModel, { type MetaSchema, type PostSchema } from '@/models/post';
 import { uid } from '@/packages/uid';
 import { checkCredential } from '@/middlewares/credential';
 import { type Nil, isNil } from '@/utils';
+import { UpdateQuery } from '@/infrastructures/mongodb';
 
+type PostQuery = {
+  id?: string;
+  author?: PostSchema['meta']['author'];
+};
+type PostBody = {
+  contents?: object[];
+  title?: string;
+};
 const post = new Router({ prefix: '/post' });
 
 const isPostNotExist = (p?: Partial<PostSchema> | null): p is Nil => isNil(p);
 const isPostOwner = (email: string, metaInfo?: Partial<MetaSchema>) =>
   !isNil(metaInfo) && metaInfo.author !== email;
+const addAuthorToQuery = (author?: PostQuery['author'], query = {}) => {
+  if (author) {
+    return {
+      ...query,
+      'meta.author': author,
+    };
+  }
+  return query;
+};
+const addTitleToQuery = (title?: PostBody['title'], query = {}) => {
+  if (title) {
+    return {
+      ...query,
+      title,
+    };
+  }
+  return query;
+};
+const addContentsToQuery = (contents?: PostBody['contents'], query = {}) => {
+  if (contents) {
+    return {
+      ...query,
+      contents,
+    };
+  }
+  return query;
+};
+const addModifiedToQuery = (modifiedAt?: Date, query = {}) => {
+  if (modifiedAt) {
+    return {
+      ...query,
+      'meta.modifiedAt': modifiedAt,
+    };
+  }
+  return query;
+};
+
+async function getPostList(query: { author?: string }) {
+  return PostModel.readAll(query);
+}
+
+async function getPostById(id: string) {
+  return PostModel.read({ id });
+}
+
+async function removePostById(id: string) {
+  return PostModel.remove({ id });
+}
+
+async function updatePostById(
+  id: string,
+  updateQuery: UpdateQuery<PostSchema>
+) {
+  return PostModel.update({ id }, updateQuery);
+}
 /**
  * @api {get} /post/:id Read Post
  * @apiDescription 특정 id의 포스트를 조회한다. API
@@ -22,7 +86,7 @@ const isPostOwner = (email: string, metaInfo?: Partial<MetaSchema>) =>
 post.get('/:id', async (ctx: Context) => {
   const { id } = ctx.params;
 
-  const doc = await PostModel.read({ id });
+  const doc = await getPostById(id);
 
   ctx.status = 200;
   ctx.body = doc;
@@ -41,15 +105,13 @@ post.get('/:id', async (ctx: Context) => {
  */
 post.get('/', async (ctx: Context) => {
   const { query } = ctx.request;
+  const { author } = query as PostQuery;
 
-  const filterOptions: Record<string, string | string[]> = {};
-  if (query.author) {
-    filterOptions['meta.author'] = query.author;
-  }
-  const docs = await PostModel.readAll(filterOptions);
+  const filterQuery = addAuthorToQuery(author, {});
+  const posts = await getPostList(filterQuery);
 
   ctx.status = 200;
-  ctx.body = docs;
+  ctx.body = posts;
 });
 
 /**
@@ -92,17 +154,20 @@ post.post('/', checkCredential, koaBody(), async (ctx: Context) => {
 post.delete('/', checkCredential, koaBody(), async (ctx: Context) => {
   const { query } = ctx.request;
   const { email } = ctx.state.user;
-  const { id } = query;
+  const { id } = query as PostQuery;
 
-  const doc = await PostModel.read({ id });
-  if (isPostNotExist(doc)) {
+  if (isNil(id)) {
     ctx.throw(400, 'Bad Request');
   }
-  if (!isPostOwner(email, doc.meta)) {
+  const targetPost = await getPostById(id);
+  if (isPostNotExist(targetPost)) {
+    ctx.throw(400, 'Bad Request');
+  }
+  if (!isPostOwner(email, targetPost.meta)) {
     ctx.throw(403, 'Forbidden');
   }
 
-  await PostModel.remove({ id });
+  await removePostById(id);
 
   ctx.status = 200;
 });
@@ -122,28 +187,23 @@ post.patch('/', checkCredential, koaBody(), async (ctx: Context) => {
   const { id, title, contents } = ctx.request.body;
   const { email } = ctx.state.user;
 
-  const doc = await PostModel.read({ id });
-  if (isPostNotExist(doc)) {
+  if (isNil(id)) {
     ctx.throw(400, 'Bad Request');
   }
-  if (!isPostOwner(email, doc.meta)) {
+  const targetPost = await getPostById(id);
+  if (isPostNotExist(targetPost)) {
+    ctx.throw(400, 'Bad Request');
+  }
+  if (!isPostOwner(email, targetPost.meta)) {
     ctx.throw(403, 'Forbidden');
   }
 
-  const updateQuery: Record<string, string | object> = {};
-  if (title) {
-    updateQuery.title = title;
-  }
-  if (contents) {
-    updateQuery.contents = contents;
-  }
-  await PostModel.update(
-    { id },
-    {
-      ...updateQuery,
-      'meta.modifiedAt': new Date(),
-    }
+  const updateQuery = addModifiedToQuery(
+    new Date(),
+    addContentsToQuery(contents, addTitleToQuery(title, {}))
   );
+
+  await updatePostById(id, updateQuery);
   ctx.status = 200;
 });
 
