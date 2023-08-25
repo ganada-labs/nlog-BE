@@ -40,10 +40,10 @@ const post = new Router({ prefix: '/post' });
 post.get('/:id', async (ctx: Context) => {
   const { id } = ctx.params;
 
-  const doc = await getPostById(id);
+  const targetPost = await getPostById(id);
 
   ctx.status = 200;
-  ctx.body = doc;
+  ctx.body = targetPost;
 });
 
 /**
