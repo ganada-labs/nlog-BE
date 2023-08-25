@@ -6,10 +6,6 @@ import { uid } from '@/packages/uid';
 import { checkCredential } from '@/middlewares/credential';
 import { isNil } from '@/utils';
 import {
-  addAuthorToQuery,
-  addContentsToQuery,
-  addModifiedToQuery,
-  addTitleToQuery,
   getPostById,
   getPostList,
   isPostNotExist,
@@ -85,43 +81,21 @@ const updatePost = async (data: {
 
   return true;
 };
-const updateTitleQuery = (data: {
-  id: string;
-  contents: object[];
-  title: string;
-}) => {
-  const query = addTitleToQuery(data.title, {});
-  return {
-    ...data,
-    query,
-  };
-};
 
-const updateContentsQuery = (data: {
-  id: string;
-  contents: object[];
-  title: string;
-  query: object;
-}) => {
-  const query = addContentsToQuery(data.contents, data.query);
-  return {
-    ...data,
-    query,
-  };
-};
+const updateQuery =
+  <T>(property: string, value?: T) =>
+  (context: { query?: Record<string, T> }) => {
+    if (isNil(value)) return context;
 
-function updateModifiedAtQuery(data: {
-  id: string;
-  contents: object[];
-  title: string;
-  query: object;
-}) {
-  const newQuery = addModifiedToQuery(new Date(), data.query);
-  return {
-    ...data,
-    query: newQuery,
+    return {
+      ...context,
+      query: {
+        ...context.query,
+        [property]: value,
+      },
+    };
   };
-}
+
 /**
  * @api {get} /post/:id Read Post
  * @apiDescription 특정 id의 포스트를 조회한다. API
@@ -159,7 +133,10 @@ post.get('/', async (ctx: Context) => {
   const { query } = ctx.request;
   const { author } = query as PostQuery;
 
-  const result = await corail.railRight(getPostList, addAuthorToQuery)(author);
+  const result = await corail.railRight(
+    getPostList,
+    updateQuery('meta.author', author)
+  )({});
 
   if (corail.isFailed(result)) {
     const error = result.err as StatusError;
@@ -244,9 +221,9 @@ post.patch('/', checkCredential, koaBody(), async (ctx: Context) => {
 
   const result = await corail.railRight(
     updatePost,
-    updateModifiedAtQuery,
-    updateContentsQuery,
-    updateTitleQuery,
+    updateQuery('meta.modifiedAt', new Date()),
+    updateQuery('contents', contents),
+    updateQuery('title', title),
     checkHaveAuthority,
     getPost,
     checkIdExist
