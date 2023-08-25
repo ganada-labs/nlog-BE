@@ -38,14 +38,10 @@ export const updateModifiedAt = (value?: Date) =>
 export const checkAuthority = checkCondition<{
   email: string;
   post: PostSchema;
-}>(
-  (context) => isPostOwner(context.email, context.post.meta),
-  new StatusError(403, 'Forbidden')
-);
+}>((context) => isPostOwner(context.email, context.post.meta));
 
 export const checkIdExist = checkCondition<{ id?: string }>(
-  (context: { id?: string }) => !isNil(context.id),
-  new StatusError(400, 'Bad Request')
+  (context: { id?: string }) => !isNil(context.id)
 );
 
 export async function readPostList<T extends { query: { author?: string } }>(

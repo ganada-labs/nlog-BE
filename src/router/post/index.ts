@@ -121,9 +121,9 @@ post.delete('/:id', checkCredential, koaBody(), async (ctx: Context) => {
 
   const result = await corail.railRight(
     removePost,
-    checkAuthority,
+    checkAuthority(new StatusError(403, 'Forbidden')),
     readPost,
-    checkIdExist
+    checkIdExist(new StatusError(400, 'Bad Request'))
   )({ id, email });
 
   if (corail.isFailed(result)) {
@@ -155,9 +155,9 @@ post.patch('/:id', checkCredential, koaBody(), async (ctx: Context) => {
     updateModifiedAt(new Date()),
     updateContents(contents),
     updateTitle(title),
-    checkAuthority,
+    checkAuthority(new StatusError(403, 'Forbidden')),
     readPost,
-    checkIdExist
+    checkIdExist(new StatusError(400, 'Bad Request'))
   )({ id, email, title, contents });
 
   if (corail.isFailed(result)) {

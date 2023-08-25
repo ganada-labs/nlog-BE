@@ -20,12 +20,13 @@ describe('updateQuery', () => {
 describe('checkCondition', () => {
   it('should check condition', () => {
     const context = { name: 'John Doe' };
-    const isNameJohn = <T extends { name: string }>(ctx: T) =>
-      ctx.name === 'John Doe';
+    const isNameJohn = (ctx: { name: string }) => ctx.name === 'John Doe';
 
     const checkName = checkCondition(isNameJohn, new Error());
+    const checkName2 = checkCondition(isNameJohn);
 
     expect(checkName(context)).toStrictEqual(context);
+    expect(checkName2(new Error())(context)).toStrictEqual(context);
   });
 
   it('should throw given error if condition check failed', () => {
