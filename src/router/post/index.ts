@@ -1,7 +1,7 @@
 import { koaBody } from 'koa-body';
 import { type Context } from 'koa';
 import Router from '@koa/router';
-import PostModel, { PostSchema } from '@/models/post';
+import PostModel, { type PostSchema } from '@/models/post';
 import { uid } from '@/packages/uid';
 import { checkCredential } from '@/middlewares/credential';
 
