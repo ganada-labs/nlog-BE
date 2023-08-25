@@ -13,3 +13,13 @@ export const updateQuery =
       },
     };
   };
+
+export const checkCondition =
+  <T extends object>(condition: (context: T) => boolean, error: Error) =>
+  (context: T) => {
+    if (!condition(context)) {
+      throw error;
+    }
+
+    return context;
+  };

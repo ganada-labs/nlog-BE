@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { updateQuery } from '../context';
+import { checkCondition, updateQuery } from '../context';
 
 describe('updateQuery', () => {
   it('should update query of context', () => {
@@ -14,5 +14,26 @@ describe('updateQuery', () => {
     const newContext = updateQuery('name', 'abc')(context);
 
     expect(newContext).toStrictEqual({ query: { name: 'abc' } });
+  });
+});
+
+describe('checkCondition', () => {
+  it('should check condition', () => {
+    const context = { name: 'John Doe' };
+    const isNameJohn = <T extends { name: string }>(ctx: T) =>
+      ctx.name === 'John Doe';
+
+    const checkName = checkCondition(isNameJohn, new Error());
+
+    expect(checkName(context)).toStrictEqual(context);
+  });
+
+  it('should throw given error if condition check failed', () => {
+    const context = { name: 'John Due' };
+    const isNameJohn = (ctx: { name: string }) => ctx.name === 'John Doe';
+
+    const checkName = checkCondition(isNameJohn, new Error());
+
+    expect(() => checkName(context)).toThrowError();
   });
 });
