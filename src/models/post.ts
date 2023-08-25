@@ -86,10 +86,7 @@ const readAll: ReadAll<PostSchema> = async (query, select?) => {
   }
 };
 
-const update: Update<PostSchema> = async (
-  query: Partial<PostSchema>,
-  data: Partial<PostSchema>
-) => {
+const update: Update<PostSchema> = async (query, data) => {
   try {
     await PostModel.updateOne(query, data);
 

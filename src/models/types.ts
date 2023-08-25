@@ -1,4 +1,4 @@
-import { type FilterQuery } from '@/infrastructures/mongodb';
+import { type FilterQuery, type UpdateQuery } from '@/infrastructures/mongodb';
 
 type AsyncValue<T> = T | Promise<T>;
 
@@ -16,7 +16,7 @@ export type ReadAll<T> = (
 
 export type Update<T> = (
   query: FilterQuery<T>,
-  data: Partial<T>
+  data: UpdateQuery<T>
 ) => AsyncValue<boolean>;
 
 export type Remove<T> = (query: FilterQuery<T>) => AsyncValue<boolean>;
