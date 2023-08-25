@@ -20,12 +20,10 @@ import corail from '@/packages/corail';
 import { StatusError } from '@/utils/error';
 
 type PostQuery = {
-  id?: string;
   author?: PostSchema['meta']['author'];
 };
 
 type PostBody = {
-  id?: string;
   contents?: object[];
   title?: string;
 };
@@ -117,10 +115,9 @@ post.post('/', checkCredential, koaBody(), async (ctx: Context) => {
  * @apiGroup Post
  * @apiHeader {String} authorization 인증 토큰, Bearer 사용
  */
-post.delete('/', checkCredential, koaBody(), async (ctx: Context) => {
-  const { query } = ctx.request;
+post.delete('/:id', checkCredential, koaBody(), async (ctx: Context) => {
+  const { id } = ctx.params;
   const { email } = ctx.state.user;
-  const { id } = query as PostQuery;
 
   const result = await corail.railRight(
     removePost,
@@ -148,8 +145,9 @@ post.delete('/', checkCredential, koaBody(), async (ctx: Context) => {
  * @apiGroup Post
  * @apiHeader {String} authorization 인증 토큰, Bearer 사용
  */
-post.patch('/', checkCredential, koaBody(), async (ctx: Context) => {
-  const { id, title, contents } = ctx.request.body as PostBody;
+post.patch('/:id', checkCredential, koaBody(), async (ctx: Context) => {
+  const { id } = ctx.params;
+  const { title, contents } = ctx.request.body as PostBody;
   const { email } = ctx.state.user;
 
   const result = await corail.railRight(
