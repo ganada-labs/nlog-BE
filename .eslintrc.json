@@ -43,6 +43,7 @@
     "operator-linebreak": "off",
     "function-paren-newline": "off",
     "import/prefer-default-export": "off",
-    "indent": "off"
+    "indent": "off",
+    "@typescript-eslint/no-explicit-any": "off"
   }
 }
