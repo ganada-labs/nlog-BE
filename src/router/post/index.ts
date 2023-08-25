@@ -15,6 +15,7 @@ import {
 } from '@/services/post';
 import corail from '@/packages/corail';
 import { StatusError } from '@/utils/error';
+import { checkCondition, updateQuery } from '@/utils/context';
 
 type PostQuery = {
   id?: string;
@@ -46,15 +47,6 @@ const getPost = async (data: { id: string; email: string }) => {
     targetPost,
   };
 };
-const checkCondition =
-  <T extends object>(condition: (context: T) => boolean, error: StatusError) =>
-  (context: T) => {
-    if (condition(context)) {
-      throw error;
-    }
-
-    return context;
-  };
 
 const checkAuthority = checkCondition<{
   email: string;
@@ -83,20 +75,6 @@ const saveModifiedPost = async <T extends { id: string; query: object }>(
 
   return context;
 };
-
-const updateQuery =
-  <T>(property: string, value?: T) =>
-  (context: { query?: Record<string, T> }) => {
-    if (isNil(value)) return context;
-
-    return {
-      ...context,
-      query: {
-        ...context.query,
-        [property]: value,
-      },
-    };
-  };
 
 /**
  * @api {get} /post/:id Read Post
