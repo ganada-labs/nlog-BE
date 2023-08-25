@@ -1,12 +1,16 @@
 import { koaBody } from 'koa-body';
 import { type Context } from 'koa';
 import Router from '@koa/router';
-import PostModel, { type PostSchema } from '@/models/post';
+import PostModel, { type MetaSchema, type PostSchema } from '@/models/post';
 import { uid } from '@/packages/uid';
 import { checkCredential } from '@/middlewares/credential';
+import { type Nil, isNil } from '@/utils';
 
 const post = new Router({ prefix: '/post' });
 
+const isPostNotExist = (p?: Partial<PostSchema> | null): p is Nil => isNil(p);
+const isPostOwner = (email: string, metaInfo?: Partial<MetaSchema>) =>
+  !isNil(metaInfo) && metaInfo.author !== email;
 /**
  * @api {get} /post/:id Read Post
  * @apiDescription 특정 id의 포스트를 조회한다. API
@@ -91,14 +95,15 @@ post.delete('/', checkCredential, koaBody(), async (ctx: Context) => {
   const { id } = query;
 
   const doc = await PostModel.read({ id });
-  if (!doc) {
+  if (isPostNotExist(doc)) {
     ctx.throw(400, 'Bad Request');
   }
-  if (!doc.meta || doc.meta.author !== email) {
+  if (!isPostOwner(email, doc.meta)) {
     ctx.throw(403, 'Forbidden');
   }
 
   await PostModel.remove({ id });
+
   ctx.status = 200;
 });
 
@@ -118,10 +123,10 @@ post.patch('/', checkCredential, koaBody(), async (ctx: Context) => {
   const { email } = ctx.state.user;
 
   const doc = await PostModel.read({ id });
-  if (!doc) {
+  if (isPostNotExist(doc)) {
     ctx.throw(400, 'Bad Request');
   }
-  if (!doc.meta || doc.meta.author !== email) {
+  if (!isPostOwner(email, doc.meta)) {
     ctx.throw(403, 'Forbidden');
   }
 
