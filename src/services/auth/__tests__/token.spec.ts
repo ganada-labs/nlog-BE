@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import TokenModel from '@/models/auth';
-import { type } from '@/utils';
+import { isString } from '@/utils';
 import * as token from '../token';
 
 vi.mock('@/models/auth', async (importOriginal) => {
@@ -63,9 +63,9 @@ describe('token', () => {
     const refreshToken = token.generateRefreshToken(payload);
     const decoded = token.decodeRefreshToken(refreshToken);
 
-    expect(type.isString(decoded)).toBe(false);
+    expect(isString(decoded)).toBe(false);
 
-    const maybePayload = !type.isString(decoded) && {
+    const maybePayload = !isString(decoded) && {
       email: decoded.email,
       provider: decoded.provider,
     };

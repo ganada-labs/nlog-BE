@@ -42,6 +42,8 @@
     "implicit-arrow-linebreak": "off",
     "operator-linebreak": "off",
     "function-paren-newline": "off",
-    "import/prefer-default-export": "off"
+    "import/prefer-default-export": "off",
+    "indent": "off",
+    "@typescript-eslint/no-explicit-any": "off"
   }
 }

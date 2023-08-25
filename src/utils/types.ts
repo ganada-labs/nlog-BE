@@ -1,6 +1,6 @@
 type Email = `${string}@${string}`;
 
-type Nil = null | undefined;
+export type Nil = null | undefined;
 
 export const isString = (value: unknown): value is string =>
   typeof value === 'string';

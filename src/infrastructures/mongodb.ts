@@ -19,4 +19,4 @@ export const connect = () => {
     );
 };
 
-export { Schema, model } from 'mongoose';
+export { Schema, model, type FilterQuery, type UpdateQuery } from 'mongoose';
