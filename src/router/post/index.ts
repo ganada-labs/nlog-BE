@@ -4,18 +4,18 @@ import Router from '@koa/router';
 import PostModel, { type PostSchema } from '@/models/post';
 import { uid } from '@/packages/uid';
 import { checkCredential } from '@/middlewares/credential';
-import { isNil } from '@/utils';
+import { updateQuery } from '@/utils';
 import {
+  checkAuthority,
+  checkIdExist,
   getPostById,
   getPostList,
   isPostNotExist,
-  isPostOwner,
   removePostById,
   updatePostById,
 } from '@/services/post';
 import corail from '@/packages/corail';
 import { StatusError } from '@/utils/error';
-import { checkCondition, updateQuery } from '@/utils/context';
 
 type PostQuery = {
   id?: string;
@@ -28,14 +28,6 @@ type PostBody = {
 };
 const post = new Router({ prefix: '/post' });
 
-const checkExist =
-  (property: string) =>
-  <T extends Record<string, unknown>>(context: T) => {
-    if (isNil(context[property])) throw new StatusError(400, 'Bad Request');
-
-    return context;
-  };
-
 const getPost = async (data: { id: string; email: string }) => {
   const targetPost = await getPostById(data.id);
   if (isPostNotExist(targetPost)) {
@@ -47,14 +39,6 @@ const getPost = async (data: { id: string; email: string }) => {
     targetPost,
   };
 };
-
-const checkAuthority = checkCondition<{
-  email: string;
-  targetPost: PostSchema;
-}>(
-  (context) => isPostOwner(context.email, context.targetPost.meta),
-  new StatusError(403, 'Forbidden')
-);
 
 const removePost = async (data: {
   id: string;
@@ -173,7 +157,7 @@ post.delete('/', checkCredential, koaBody(), async (ctx: Context) => {
     removePost,
     checkAuthority,
     getPost,
-    checkExist('id')
+    checkIdExist
   )({ id, email });
 
   if (corail.isFailed(result)) {
@@ -210,7 +194,7 @@ post.patch('/', checkCredential, koaBody(), async (ctx: Context) => {
     updateTitle,
     checkAuthority,
     getPost,
-    checkExist('id')
+    checkIdExist
   )({ id, email, title, contents });
 
   if (corail.isFailed(result)) {

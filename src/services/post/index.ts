@@ -1,6 +1,8 @@
 import PostModel, { type MetaSchema, type PostSchema } from '@/models/post';
 import { type Nil, isNil } from '@/utils';
 import { UpdateQuery } from '@/infrastructures/mongodb';
+import { checkCondition } from '@/utils/context';
+import { StatusError } from '@/utils/error';
 
 export const isPostNotExist = (p?: Partial<PostSchema> | null): p is Nil =>
   isNil(p);
@@ -22,9 +24,9 @@ export async function removePostById(id: string) {
 
 export async function updatePostById(
   id: string,
-  updateQuery: UpdateQuery<PostSchema>
+  query: UpdateQuery<PostSchema>
 ) {
-  return PostModel.update({ id }, updateQuery);
+  return PostModel.update({ id }, query);
 }
 
 export const addAuthorToQuery = (author?: string, query = {}) => {
@@ -63,3 +65,16 @@ export const addModifiedToQuery = (modifiedAt?: Date, query = {}) => {
   }
   return query;
 };
+
+export const checkAuthority = checkCondition<{
+  email: string;
+  targetPost: PostSchema;
+}>(
+  (context) => isPostOwner(context.email, context.targetPost.meta),
+  new StatusError(403, 'Forbidden')
+);
+
+export const checkIdExist = checkCondition<{ id?: string }>(
+  (context: { id?: string }) => isNil(context.id),
+  new StatusError(400, 'Bad Request')
+);
