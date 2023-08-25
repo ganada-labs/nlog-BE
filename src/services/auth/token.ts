@@ -1,4 +1,5 @@
-import { isNil, token } from '@/utils';
+import * as token from '@/packages/token';
+import { isNil } from '@/utils';
 import TokenModel from '@/models/auth';
 
 export type TokenPayload = { email: string; provider: string };

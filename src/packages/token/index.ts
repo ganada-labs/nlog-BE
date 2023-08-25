@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import { isString, isNil } from './types';
+import { isString, isNil } from '@/utils/types';
 
 export type TokenSecret = jwt.Secret;
 export type TokenPayload = string | object | Buffer;
