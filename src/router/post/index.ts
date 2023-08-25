@@ -13,7 +13,7 @@ import {
   updateAuthor,
   updateContents,
   updateModifiedAt,
-  updatePost,
+  updatePost2,
   updateTitle,
 } from '@/services/post';
 import corail from '@/packages/corail';
@@ -152,7 +152,7 @@ post.patch('/:id', checkCredential, koaBody(), async (ctx: Context) => {
   const { email } = ctx.state.user;
 
   const result = await corail.railRight(
-    updatePost,
+    updatePost2(new StatusError(500, 'Internal Server Error')),
     updateModifiedAt(new Date()),
     updateContents(contents),
     updateTitle(title),

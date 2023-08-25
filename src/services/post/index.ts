@@ -85,3 +85,14 @@ export async function updatePost<T extends { id: string; query: object }>(
 
   return context;
 }
+
+export function updatePost2<T extends Record<string, any>>(err: Error) {
+  return async (context: T) => {
+    const isSuccess = await updatePostById(context.id, context.query);
+    if (!isSuccess) {
+      throw err;
+    }
+
+    return context;
+  };
+}
