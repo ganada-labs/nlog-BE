@@ -51,9 +51,8 @@ export const checkIdExist = checkCondition<{ id?: string }>(
 export async function readPostList<T extends { query: { author?: string } }>(
   context: T
 ) {
-  console.log(context.query);
   const posts = await PostModel.readAll(context.query);
-  console.log(posts);
+
   return {
     ...context,
     posts,
