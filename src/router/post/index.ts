@@ -114,7 +114,7 @@ post.delete('/', checkCredential, koaBody(), async (ctx: Context) => {
  * @apiHeader {String} authorization 인증 토큰, Bearer 사용
  */
 post.patch('/', checkCredential, koaBody(), async (ctx: Context) => {
-  const { id, title } = ctx.request.body;
+  const { id, title, contents } = ctx.request.body;
   const { email } = ctx.state.user;
 
   const doc = await PostModel.read({ id });
@@ -125,10 +125,17 @@ post.patch('/', checkCredential, koaBody(), async (ctx: Context) => {
     ctx.throw(403, 'Forbidden');
   }
 
+  const updateQuery: Record<string, string | object> = {};
+  if (title) {
+    updateQuery.title = title;
+  }
+  if (contents) {
+    updateQuery.contents = contents;
+  }
   await PostModel.update(
     { id },
     {
-      title,
+      ...updateQuery,
       'meta.modifiedAt': new Date(),
     }
   );
