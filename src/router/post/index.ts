@@ -1,11 +1,18 @@
 import { koaBody } from 'koa-body';
 import { type Context } from 'koa';
 import Router from '@koa/router';
-import PostModel, { type MetaSchema, type PostSchema } from '@/models/post';
+import PostModel, { type PostSchema } from '@/models/post';
 import { uid } from '@/packages/uid';
 import { checkCredential } from '@/middlewares/credential';
-import { type Nil, isNil } from '@/utils';
-import { UpdateQuery } from '@/infrastructures/mongodb';
+import { isNil } from '@/utils';
+import {
+  getPostById,
+  getPostList,
+  isPostNotExist,
+  isPostOwner,
+  removePostById,
+  updatePostById,
+} from '@/services/post';
 
 type PostQuery = {
   id?: string;
@@ -17,9 +24,6 @@ type PostBody = {
 };
 const post = new Router({ prefix: '/post' });
 
-const isPostNotExist = (p?: Partial<PostSchema> | null): p is Nil => isNil(p);
-const isPostOwner = (email: string, metaInfo?: Partial<MetaSchema>) =>
-  !isNil(metaInfo) && metaInfo.author !== email;
 const addAuthorToQuery = (author?: PostQuery['author'], query = {}) => {
   if (author) {
     return {
@@ -57,24 +61,6 @@ const addModifiedToQuery = (modifiedAt?: Date, query = {}) => {
   return query;
 };
 
-async function getPostList(query: { author?: string }) {
-  return PostModel.readAll(query);
-}
-
-async function getPostById(id: string) {
-  return PostModel.read({ id });
-}
-
-async function removePostById(id: string) {
-  return PostModel.remove({ id });
-}
-
-async function updatePostById(
-  id: string,
-  updateQuery: UpdateQuery<PostSchema>
-) {
-  return PostModel.update({ id }, updateQuery);
-}
 /**
  * @api {get} /post/:id Read Post
  * @apiDescription 특정 id의 포스트를 조회한다. API
