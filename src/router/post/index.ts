@@ -27,13 +27,13 @@ type PostBody = {
 };
 const post = new Router({ prefix: '/post' });
 
-const checkIdExist = (data: { id?: string; email: string }) => {
-  if (isNil(data.id)) {
-    throw new StatusError(400, 'Bad Request');
-  }
+const checkExist =
+  (property: string) =>
+  <T extends Record<string, unknown>>(context: T) => {
+    if (isNil(context[property])) throw new StatusError(400, 'Bad Request');
 
-  return data;
-};
+    return context;
+  };
 
 const getPost = async (data: { id: string; email: string }) => {
   const targetPost = await getPostById(data.id);
@@ -46,18 +46,23 @@ const getPost = async (data: { id: string; email: string }) => {
     targetPost,
   };
 };
+const checkCondition =
+  <T extends object>(condition: (context: T) => boolean, error: StatusError) =>
+  (context: T) => {
+    if (condition(context)) {
+      throw error;
+    }
 
-const checkHaveAuthority = (data: {
-  id: string;
-  targetPost: PostSchema;
+    return context;
+  };
+
+const checkAuthority = checkCondition<{
   email: string;
-}) => {
-  if (!isPostOwner(data.email, data.targetPost.meta)) {
-    throw new StatusError(403, 'Forbidden');
-  }
-
-  return data;
-};
+  targetPost: PostSchema;
+}>(
+  (context) => isPostOwner(context.email, context.targetPost.meta),
+  new StatusError(403, 'Forbidden')
+);
 
 const removePost = async (data: {
   id: string;
@@ -67,19 +72,16 @@ const removePost = async (data: {
   await removePostById(data.id);
 };
 
-const updatePost = async (data: {
-  id: string;
-  contents: object[];
-  title: string;
-  query: object;
-}) => {
-  const isSuccess = await updatePostById(data.id, data.query);
+const saveModifiedPost = async <T extends { id: string; query: object }>(
+  context: T
+) => {
+  const isSuccess = await updatePostById(context.id, context.query);
 
   if (!isSuccess) {
     throw new StatusError(500, 'Internal Server Error');
   }
 
-  return true;
+  return context;
 };
 
 const updateQuery =
@@ -191,9 +193,9 @@ post.delete('/', checkCredential, koaBody(), async (ctx: Context) => {
 
   const result = await corail.railRight(
     removePost,
-    checkHaveAuthority,
+    checkAuthority,
     getPost,
-    checkIdExist
+    checkExist('id')
   )({ id, email });
 
   if (corail.isFailed(result)) {
@@ -219,14 +221,18 @@ post.patch('/', checkCredential, koaBody(), async (ctx: Context) => {
   const { id, title, contents } = ctx.request.body as PostBody;
   const { email } = ctx.state.user;
 
+  const updateModifiedAt = updateQuery('meta.modifiedAt', new Date());
+  const updateContents = updateQuery('contents', contents);
+  const updateTitle = updateQuery('title', title);
+
   const result = await corail.railRight(
-    updatePost,
-    updateQuery('meta.modifiedAt', new Date()),
-    updateQuery('contents', contents),
-    updateQuery('title', title),
-    checkHaveAuthority,
+    saveModifiedPost,
+    updateModifiedAt,
+    updateContents,
+    updateTitle,
+    checkAuthority,
     getPost,
-    checkIdExist
+    checkExist('id')
   )({ id, email, title, contents });
 
   if (corail.isFailed(result)) {
