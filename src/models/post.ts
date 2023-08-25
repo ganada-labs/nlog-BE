@@ -37,7 +37,7 @@ const postSchema = new Schema<PostSchema>({
 
 const PostModel = model<PostSchema>('Post', postSchema);
 
-const create: Create<PostSchema> = async (data: PostSchema) => {
+const create: Create<PostSchema> = async (data) => {
   try {
     const isExist = await PostModel.exists({ id: data.id });
     if (isExist) {
@@ -57,10 +57,7 @@ const create: Create<PostSchema> = async (data: PostSchema) => {
   }
 };
 
-const read: Read<PostSchema> = async (
-  query: Partial<PostSchema>,
-  select?: Partial<PostSchema>
-) => {
+const read: Read<PostSchema> = async (query, select?) => {
   try {
     const result = await PostModel.findOne(query, select);
 
@@ -99,7 +96,7 @@ const update: Update<PostSchema> = async (query, data) => {
   }
 };
 
-const remove: Remove<PostSchema> = async (query: Partial<PostSchema>) => {
+const remove: Remove<PostSchema> = async (query) => {
   try {
     await PostModel.deleteOne(query);
 
