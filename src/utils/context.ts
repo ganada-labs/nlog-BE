@@ -1,4 +1,4 @@
-import { isNil } from '.';
+import { isNil } from './types';
 
 export const updateQuery =
   <T>(property: string, value?: T) =>

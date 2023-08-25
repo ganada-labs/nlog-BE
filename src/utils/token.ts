@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import * as type from '@/utils/types';
+import { isString, isNil } from './types';
 
 export type TokenSecret = jwt.Secret;
 export type TokenPayload = string | object | Buffer;
@@ -32,7 +32,7 @@ export const verify = (token: string, secret: TokenSecret) => {
   try {
     const decoded = jwt.verify(token, secret);
 
-    if (type.isString(decoded)) {
+    if (isString(decoded)) {
       throw Error('검증에 실패함');
     }
 
@@ -51,7 +51,7 @@ export const verify = (token: string, secret: TokenSecret) => {
  * @returns 토큰 문자열
  */
 export const getBearerCredential = (authorization: string | undefined) => {
-  if (type.isNil(authorization)) return '';
+  if (isNil(authorization)) return '';
 
   const [scheme, credential] = authorization.split(' ');
 
