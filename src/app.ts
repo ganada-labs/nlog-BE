@@ -5,8 +5,8 @@ import Auth from '@/router/auth';
 import User from '@/router/user';
 import Post from '@/router/post';
 import { passport } from '@/packages/passport';
-import * as mongodb from '@/infrastructures/mongodb';
-import * as redis from '@/infrastructures/redis';
+import * as mongodb from '@/repos/mongodb';
+import * as redis from '@/repos/redis';
 
 const CLIENT_DOMAIN = import.meta.env.VITE_DOMAIN;
 

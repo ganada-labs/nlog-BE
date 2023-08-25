@@ -1,4 +1,4 @@
-import { type FilterQuery, type UpdateQuery } from '@/infrastructures/mongodb';
+import { type FilterQuery, type UpdateQuery } from '@/repos/mongodb';
 
 type AsyncValue<T> = T | Promise<T>;
 

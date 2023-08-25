@@ -1,6 +1,6 @@
 import PostModel, { type MetaSchema, type PostSchema } from '@/models/post';
 import { type Nil, isNil } from '@/utils';
-import { type UpdateQuery } from '@/infrastructures/mongodb';
+import { type UpdateQuery } from '@/repos/mongodb';
 import { checkCondition, updateQuery } from '@/utils/context';
 import { StatusError } from '@/utils/error';
 
