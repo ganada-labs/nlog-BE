@@ -58,12 +58,13 @@ post.get('/', async (ctx: Context) => {
  * @apiHeader {String} authorization 인증 토큰, Bearer 사용
  */
 post.post('/', checkCredential, koaBody(), async (ctx: Context) => {
-  const { title } = ctx.request.body;
+  const { title, contents } = ctx.request.body;
   const { email } = ctx.state.user;
 
   const newPost: PostSchema = {
     id: uid(),
     title,
+    contents,
     meta: {
       author: email,
     },
