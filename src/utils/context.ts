@@ -1,8 +1,9 @@
 import { isNil } from './types';
 
+type Query = Record<string, any>;
+
 export const updateQuery =
-  <T>(property: string, value?: T) =>
-  (context: { query?: Record<string, T> }) => {
+  (property: string, value?: any) => (context: { query?: Query }) => {
     if (isNil(value)) return context;
 
     return {

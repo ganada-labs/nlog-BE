@@ -4,15 +4,17 @@ import Router from '@koa/router';
 import PostModel, { type PostSchema } from '@/models/post';
 import { uid } from '@/packages/uid';
 import { checkCredential } from '@/middlewares/credential';
-import { updateQuery } from '@/utils';
 import {
   checkAuthority,
   checkIdExist,
-  getPostById,
-  getPostList,
-  isPostNotExist,
-  removePostById,
-  updatePostById,
+  readPost,
+  readPostList,
+  removePost,
+  updateAuthor,
+  updateContents,
+  updateModifiedAt,
+  updatePost,
+  updateTitle,
 } from '@/services/post';
 import corail from '@/packages/corail';
 import { StatusError } from '@/utils/error';
@@ -21,44 +23,14 @@ type PostQuery = {
   id?: string;
   author?: PostSchema['meta']['author'];
 };
+
 type PostBody = {
   id?: string;
   contents?: object[];
   title?: string;
 };
+
 const post = new Router({ prefix: '/post' });
-
-const getPost = async (data: { id: string; email: string }) => {
-  const targetPost = await getPostById(data.id);
-  if (isPostNotExist(targetPost)) {
-    throw new StatusError(400, 'Bad Request');
-  }
-
-  return {
-    ...data,
-    targetPost,
-  };
-};
-
-const removePost = async (data: {
-  id: string;
-  targetPost: PostSchema;
-  email: string;
-}) => {
-  await removePostById(data.id);
-};
-
-const saveModifiedPost = async <T extends { id: string; query: object }>(
-  context: T
-) => {
-  const isSuccess = await updatePostById(context.id, context.query);
-
-  if (!isSuccess) {
-    throw new StatusError(500, 'Internal Server Error');
-  }
-
-  return context;
-};
 
 /**
  * @api {get} /post/:id Read Post
@@ -71,7 +43,7 @@ const saveModifiedPost = async <T extends { id: string; query: object }>(
 post.get('/:id', async (ctx: Context) => {
   const { id } = ctx.params;
 
-  const result = await corail.railRight(getPostById)(id);
+  const result = await corail.railRight(readPost)({ id });
 
   if (corail.isFailed(result)) {
     const error = result.err as StatusError;
@@ -97,10 +69,7 @@ post.get('/', async (ctx: Context) => {
   const { query } = ctx.request;
   const { author } = query as PostQuery;
 
-  const result = await corail.railRight(
-    getPostList,
-    updateQuery('meta.author', author)
-  )({});
+  const result = await corail.railRight(readPostList, updateAuthor(author))({});
 
   if (corail.isFailed(result)) {
     const error = result.err as StatusError;
@@ -108,7 +77,7 @@ post.get('/', async (ctx: Context) => {
   }
 
   ctx.status = 200;
-  ctx.body = result;
+  ctx.body = result.posts;
 });
 
 /**
@@ -156,7 +125,7 @@ post.delete('/', checkCredential, koaBody(), async (ctx: Context) => {
   const result = await corail.railRight(
     removePost,
     checkAuthority,
-    getPost,
+    readPost,
     checkIdExist
   )({ id, email });
 
@@ -183,17 +152,13 @@ post.patch('/', checkCredential, koaBody(), async (ctx: Context) => {
   const { id, title, contents } = ctx.request.body as PostBody;
   const { email } = ctx.state.user;
 
-  const updateModifiedAt = updateQuery('meta.modifiedAt', new Date());
-  const updateContents = updateQuery('contents', contents);
-  const updateTitle = updateQuery('title', title);
-
   const result = await corail.railRight(
-    saveModifiedPost,
-    updateModifiedAt,
-    updateContents,
-    updateTitle,
+    updatePost,
+    updateModifiedAt(new Date()),
+    updateContents(contents),
+    updateTitle(title),
     checkAuthority,
-    getPost,
+    readPost,
     checkIdExist
   )({ id, email, title, contents });
 
