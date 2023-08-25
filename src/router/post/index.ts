@@ -83,6 +83,8 @@ post.get('/', async (ctx: Context) => {
  * @apiDescription 포스트를 생성하는 API
  * 전달받은 컨텐츠로 포스트를 생성하고 아이디를 부여한다.
  *
+ * @apiBody {String} [title] 타이틀
+ * @apiBody {String} [contents] 컨텐츠
  * @apiVersion 0.1.0
  * @apiGroup Post
  * @apiHeader {String} authorization 인증 토큰, Bearer 사용
@@ -106,11 +108,10 @@ post.post('/', checkCredential, koaBody(), async (ctx: Context) => {
 });
 
 /**
- * @api {delete} /post Delete Post
+ * @api {delete} /post/:id Delete Post
  * @apiDescription 포스트를 제거하는 API
- * body에 id 정보를 전달하면 해당하는 post를 제거한다.
+ * id에 해당하는 post를 제거한다.
  *
- * @apiParam {String} id 제거할 포스트의 id
  * @apiVersion 0.1.0
  * @apiGroup Post
  * @apiHeader {String} authorization 인증 토큰, Bearer 사용
@@ -135,12 +136,12 @@ post.delete('/:id', checkCredential, koaBody(), async (ctx: Context) => {
 });
 
 /**
- * @api {patch} /post Update Post
+ * @api {patch} /post/:id Update Post
  * @apiDescription 포스트를 수정하는 API
- * body에 id 정보를 전달하면 해당하는 post를 수정한다.
+ * id에 해당하는 post를 수정한다.
  *
- * @apiBody {String} id 수정할 포스트의 id
  * @apiBody {String} [title] 새 타이틀
+ * @apiBody {String} [contents] 새 컨텐츠
  * @apiVersion 0.1.0
  * @apiGroup Post
  * @apiHeader {String} authorization 인증 토큰, Bearer 사용
