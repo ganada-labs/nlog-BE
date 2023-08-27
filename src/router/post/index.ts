@@ -105,6 +105,9 @@ post.post('/', checkCredential, koaBody(), async (ctx: Context) => {
   await PostModel.create(newPost);
 
   ctx.status = 200;
+  ctx.body = {
+    id: newPost.id,
+  };
 });
 
 /**
