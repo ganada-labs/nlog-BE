@@ -43,7 +43,7 @@ app.use(
         `https://www.${CLIENT_DOMAIN}`,
         'http://localhost:3000',
       ];
-      const { origin } = ctx.request;
+      const { origin } = ctx.request.header;
       if (!origin || !allowedOrigins.includes(origin)) {
         console.log(48, origin);
         return ctx.throw(403, `${origin} is not a valid origin`);
