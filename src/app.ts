@@ -40,12 +40,11 @@ app.use(
   cors({
     origin: (ctx: Context) => {
       const allowedOrigins = [
-        `https://www.${CLIENT_DOMAIN}`,
-        'http://localhost:3000',
+        `https://www.${CLIENT_DOMAIN}/`,
+        'http://localhost:3000/',
       ];
 
-      console.log(ctx);
-      const domain = ctx.request.header.origin;
+      const domain = ctx.request.header.referer;
       if (!domain || !allowedOrigins.includes(domain)) {
         return ctx.throw(403, `${domain} is not a valid origin`);
       }
