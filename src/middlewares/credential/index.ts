@@ -55,7 +55,7 @@ export const checkUnusedToken = async ({ payload, originToken }: TokenInfo) => {
 
 export const checkRefreshCredential = async (ctx: Context, next: Next) => {
   const refreshToken = ctx.cookies.get('refresh_token');
-  console.log(ctx.cookies);
+
   const result = await corail.railRight(
     checkUnusedToken,
     checkPayloadSatisfied,
