@@ -47,7 +47,7 @@ app.use(
         'http://localhost:3000/',
       ];
 
-      const domain = ctx.request.header.referer;
+      const domain = ctx.request.header.referer?.slice(0, -1);
       if (!domain || !allowedOrigins.includes(domain)) {
         return ctx.throw(403, `${domain} is not a valid origin`);
       }
