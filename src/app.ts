@@ -43,6 +43,7 @@ app.use(
         `https://www.${CLIENT_DOMAIN}`,
         'http://localhost:3000',
       ];
+      console.log(ctx.request.header);
       const domain = ctx.request.header.origin;
       if (!domain || !allowedOrigins.includes(domain)) {
         console.log(48, domain, ctx.request.header);
