@@ -35,9 +35,21 @@ app.use(passport.initialize());
 /**
  * 서브도메인에 대한 CORS 해제
  */
+
 app.use(
   cors({
-    origin: `https://www.${CLIENT_DOMAIN}`,
+    origin: (ctx: Context) => {
+      const allowedOrigins = [
+        `https://www.${CLIENT_DOMAIN}`,
+        'http://localhost:3000',
+      ];
+      const { origin } = ctx.headers;
+
+      if (!origin || !allowedOrigins.includes(origin)) {
+        return ctx.throw(`${origin} is not a valid origin`);
+      }
+      return origin;
+    },
     credentials: true,
   })
 );
