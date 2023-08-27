@@ -44,9 +44,9 @@ app.use(
         'http://localhost:3000',
       ];
       const { origin } = ctx.headers;
-
+      console.log(origin);
       if (!origin || !allowedOrigins.includes(origin)) {
-        return ctx.throw(`${origin} is not a valid origin`);
+        return ctx.throw(403, `${origin} is not a valid origin`);
       }
       return origin;
     },
