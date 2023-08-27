@@ -43,6 +43,7 @@ app.use(
         `https://www.${CLIENT_DOMAIN}`,
         `https://www.${CLIENT_DOMAIN}/`,
         'https://accounts.google.com/',
+        'https://accounts.google.com',
         'http://localhost:3000',
         'http://localhost:3000/',
       ];
