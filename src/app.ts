@@ -45,11 +45,9 @@ app.use(
       ];
 
       const domain = ctx.request.header.origin;
-      console.log(48, domain);
       if (!domain || !allowedOrigins.includes(domain)) {
         return ctx.throw(403, `${domain} is not a valid origin`);
       }
-      console.log(51, domain);
       return domain;
     },
     credentials: true,
