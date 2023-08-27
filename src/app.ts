@@ -56,6 +56,7 @@ app.use(
       }
       return domain;
     },
+    allowHeaders: ['Origin'],
     credentials: true,
   })
 );
