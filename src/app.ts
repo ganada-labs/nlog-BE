@@ -45,7 +45,11 @@ app.use(
         'https://accounts.google.com',
         'http://localhost:3000',
       ];
-      console.log(ctx.request.header.origin, ctx.request.header.referer);
+      console.log(
+        ctx.request.header,
+        ctx.request.header.origin,
+        ctx.request.header.referer
+      );
       const domain = ctx.request.header.origin || ctx.request.header.referer;
       if (!domain || !allowedOrigins.includes(domain)) {
         return ctx.throw(403, `${domain} is not a valid origin`);
