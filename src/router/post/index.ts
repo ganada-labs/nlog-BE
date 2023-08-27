@@ -48,8 +48,10 @@ post.get('/:id', async (ctx: Context) => {
     ctx.throw(error.status, error.message);
   }
 
+  const { post: targetPost } = result;
+
   ctx.status = 200;
-  ctx.body = result;
+  ctx.body = targetPost;
 });
 
 /**
