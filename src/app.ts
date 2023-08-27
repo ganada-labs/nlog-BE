@@ -41,8 +41,10 @@ app.use(
     origin: (ctx: Context) => {
       const allowedOrigins = [
         `https://www.${CLIENT_DOMAIN}`,
+        `https://www.${CLIENT_DOMAIN}/`,
         'https://accounts.google.com/',
         'http://localhost:3000',
+        'http://localhost:3000/',
       ];
 
       const domain = ctx.request.header.referer;
