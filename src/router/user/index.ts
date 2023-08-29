@@ -9,7 +9,7 @@ import * as Auth from '@/services/auth';
 
 const user = new Router({ prefix: '/user' });
 /**
- * @api {get} /user Get Account
+ * @api {get} /user Get My Account
  * @apiDescription 내 계정 정보 요청
  *
  * @apiVersion 0.1.0
