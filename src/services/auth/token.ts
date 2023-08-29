@@ -28,6 +28,9 @@ export const saveToken = async (email: string, refreshToken: string) =>
 export const decodeRefreshToken = (refreshToken: string) =>
   token.verify(refreshToken, JWT_REFRESH_SECRET);
 
+export const decodeAccessToken = (tokenStr: string) =>
+  token.verify(tokenStr, JWT_ACCESS_SECRET);
+
 export const isUsedToken = async (email: string, tokenStr: string) => {
   const savedToken = await TokenModel.get({ email });
 
@@ -37,6 +40,8 @@ export const isUsedToken = async (email: string, tokenStr: string) => {
 
   return false;
 };
+
+export const { getBearerCredential } = token;
 
 export const isPayloadSatisfied = (
   payload: Record<string, string>

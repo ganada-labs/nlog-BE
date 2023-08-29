@@ -4,6 +4,8 @@ import UserModel from '@/models/user';
 import AuthModel from '@/models/auth';
 import { checkCredential } from '@/middlewares/credential';
 import { isNil } from '@/utils';
+import { isString } from '@/utils/types';
+import * as Auth from '@/services/auth';
 
 const user = new Router({ prefix: '/user' });
 /**
@@ -49,6 +51,18 @@ user.get('/:email', async (ctx: Context) => {
 
   if (isNil(userData)) {
     ctx.throw(400, '유저 정보를 읽는데 실패함');
+  }
+
+  const token = Auth.getBearerCredential(ctx.request.header.authorization);
+  const decoded = Auth.decodeAccessToken(token);
+  if (isString(decoded) || decoded.email !== email) {
+    ctx.body = {
+      myAccount: false,
+      name: userData.name,
+      email,
+    };
+    ctx.status = 200;
+    return;
   }
 
   ctx.body = {

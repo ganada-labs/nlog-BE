@@ -71,4 +71,19 @@ describe('token', () => {
     };
     expect(maybePayload).toStrictEqual(payload);
   });
+
+  it('엑세스 토큰을 해석할 수 있다', () => {
+    const { payload } = setup();
+
+    const accessToken = token.generateAccessToken(payload);
+    const decoded = token.decodeAccessToken(accessToken);
+
+    expect(isString(decoded)).toBe(false);
+
+    const maybePayload = !isString(decoded) && {
+      email: decoded.email,
+      provider: decoded.provider,
+    };
+    expect(maybePayload).toStrictEqual(payload);
+  });
 });
