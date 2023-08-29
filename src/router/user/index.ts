@@ -8,7 +8,7 @@ import { isNil } from '@/utils';
 const user = new Router({ prefix: '/user' });
 /**
  * @api {get} /user Get Account
- * @apiDescription 계정 정보 요청
+ * @apiDescription 내 계정 정보 요청
  *
  * @apiVersion 0.1.0
  * @apiGroup User
@@ -20,11 +20,39 @@ user.get('/', checkCredential, async (ctx: Context) => {
   const { email } = ctx.state.user;
 
   const userData = await UserModel.read({ email });
+
   if (isNil(userData)) {
     ctx.throw(400, '유저 정보를 읽는데 실패함');
   }
 
   ctx.body = {
+    name: userData.name,
+    email,
+  };
+  ctx.status = 200;
+});
+
+/**
+ * @api {get} /user/:email Get Account
+ * @apiDescription 지정 유저 계정 정보 요청
+ * 지정한 email에 해당하는 유저의 정보를 조회한다.
+ *
+ * @apiVersion 0.1.0
+ * @apiGroup User
+ * @apiSuccess {Boolean} myAccount 조회한 계정이 내 계정인지 여부
+ * @apiSuccess {String} name 유저 이름
+ * @apiSuccess {String} email 유저 이메일
+ */
+user.get('/:email', async (ctx: Context) => {
+  const { email } = ctx.params;
+  const userData = await UserModel.read({ email });
+
+  if (isNil(userData)) {
+    ctx.throw(400, '유저 정보를 읽는데 실패함');
+  }
+
+  ctx.body = {
+    myAccount: true,
     name: userData.name,
     email,
   };
