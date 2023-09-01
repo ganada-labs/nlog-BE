@@ -42,6 +42,8 @@ const post = new Router({ prefix: '/post' });
  */
 post.get('/:id', async (ctx: Context) => {
   const { id } = ctx.params;
+  const { query } = ctx.request;
+  const { isAuthor } = query;
 
   const result = await corail.railRight(readPost)({ id });
 
@@ -52,21 +54,23 @@ post.get('/:id', async (ctx: Context) => {
 
   const { post: targetPost } = result;
 
-  const token = Auth.getBearerCredential(ctx.request.header.authorization);
-  const decoded = Auth.decodeAccessToken(token);
+  if (isAuthor) {
+    const token = Auth.getBearerCredential(ctx.request.header.authorization);
+    const decoded = Auth.decodeAccessToken(token);
 
-  let isAuthor = false;
-  if (
-    !isString(decoded) &&
-    !isNil(decoded.email) &&
-    decoded.email === targetPost.meta?.author
-  ) {
-    isAuthor = true;
+    const checkIsAuthor = () =>
+      !isString(decoded) &&
+      !isNil(decoded.email) &&
+      decoded.email === targetPost.meta?.author;
+
+    ctx.status = 200;
+    ctx.body = {
+      isAuthor: checkIsAuthor(),
+    };
   }
 
   ctx.status = 200;
   ctx.body = {
-    isAuthor,
     post: targetPost,
   };
 });
