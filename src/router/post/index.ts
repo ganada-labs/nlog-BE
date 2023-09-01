@@ -36,7 +36,9 @@ const post = new Router({ prefix: '/post' });
  * @api {get} /post/:id Read Post
  * @apiDescription 특정 id의 포스트를 조회한다. API
  * 해당하는 id의 포스트를 읽고 반환한다.
+ * isAuthor 파라미터를 전달하면 유저가 해당 글의 작성자인지 여부를 반환한다.
  *
+ * @apiParam {Boolean} [isAuthor] 유저가 해당 글의 작성자인지 알려면 true를 입력
  * @apiVersion 0.1.0
  * @apiGroup Post
  */
