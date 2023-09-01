@@ -69,6 +69,8 @@ post.get('/:id', async (ctx: Context) => {
     ctx.body = {
       isAuthor: checkIsAuthor(),
     };
+
+    return;
   }
 
   ctx.status = 200;
