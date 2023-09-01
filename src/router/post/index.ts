@@ -16,8 +16,10 @@ import {
   updatePost2,
   updateTitle,
 } from '@/services/post';
+import * as Auth from '@/services/auth';
 import corail from '@/packages/corail';
 import { StatusError } from '@/utils/error';
+import { isNil, isString } from '@/utils';
 
 type PostQuery = {
   author?: PostSchema['meta']['author'];
@@ -50,8 +52,23 @@ post.get('/:id', async (ctx: Context) => {
 
   const { post: targetPost } = result;
 
+  const token = Auth.getBearerCredential(ctx.request.header.authorization);
+  const decoded = Auth.decodeAccessToken(token);
+
+  let isAuthor = false;
+  if (
+    !isString(decoded) &&
+    !isNil(decoded.email) &&
+    decoded.email === targetPost.meta?.author
+  ) {
+    isAuthor = true;
+  }
+
   ctx.status = 200;
-  ctx.body = targetPost;
+  ctx.body = {
+    isAuthor,
+    post: targetPost,
+  };
 });
 
 /**
