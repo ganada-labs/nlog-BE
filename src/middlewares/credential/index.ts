@@ -14,7 +14,7 @@ export const checkRefreshTokenExist = (
   refreshToken?: string
 ): { refreshToken: string } => {
   if (isNil(refreshToken)) {
-    throw new StatusError(401, 'Token not exist');
+    throw new StatusError(403, 'Token not exist');
   }
 
   return { refreshToken };
@@ -28,7 +28,7 @@ export const checkVerifedToken = ({
   const decoded = Auth.decodeRefreshToken(refreshToken);
 
   if (isString(decoded)) {
-    throw new StatusError(401, `Failed to validate token: ${decoded}`);
+    throw new StatusError(403, `Failed to validate token: ${decoded}`);
   }
 
   return {
@@ -39,7 +39,7 @@ export const checkVerifedToken = ({
 
 export const checkPayloadSatisfied = ({ payload, originToken }: TokenInfo) => {
   if (!Auth.isPayloadSatisfied(payload)) {
-    throw new StatusError(401, 'payload is wrong');
+    throw new StatusError(403, 'payload is wrong');
   }
 
   return { payload, originToken };
