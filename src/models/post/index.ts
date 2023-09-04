@@ -21,12 +21,15 @@ const metaSchema = new Schema<MetaSchema>({
   modifiedAt: { type: Date, default: Date.now },
 });
 
-const postSchema = new Schema<PostSchema>({
-  id: { type: String, required: true },
-  title: { type: String, required: true },
-  contents: { type: Array, default: [] },
-  meta: metaSchema,
-});
+const postSchema = new Schema<PostSchema>(
+  {
+    id: { type: String, required: true },
+    title: { type: String, required: true },
+    contents: { type: Array, default: [] },
+    meta: metaSchema,
+  },
+  { minimize: false }
+);
 
 const PostModel = model<PostSchema>('Post', postSchema);
 
