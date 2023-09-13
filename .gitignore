@@ -25,6 +25,8 @@ dist-ssr
 
 # environment
 .env
+.env.development
+.env.local
 
 # github
 .github/*

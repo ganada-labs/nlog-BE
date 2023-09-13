@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "start": "node index.js",
+    "start": "tsc && vite build && node index.js",
+    "start:dev": "tsc && vite build --mode development && node index.js ",
     "test": "vitest run",
     "test:watch": "vitest",
     "preview": "vite preview",
