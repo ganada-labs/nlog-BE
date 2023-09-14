@@ -1,4 +1,5 @@
 import { client } from '@/repos/redis';
+import { ENV } from '@/constants';
 
 type Token = string;
 
@@ -9,7 +10,7 @@ interface TokenSchema {
 
 export type TokenQuery = Omit<TokenSchema, 'token'>;
 
-const createKey = (query: TokenQuery) => `${query.email}`;
+const createKey = (query: TokenQuery) => `${ENV.REDIS_PREFIX}${query.email}`;
 
 const set = async (query: TokenQuery, value: Token) => {
   try {
