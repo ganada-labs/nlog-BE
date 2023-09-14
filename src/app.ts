@@ -67,4 +67,5 @@ app.use(User.routes());
 app.use(Post.routes());
 app.use(router.allowedMethods());
 
+app.proxy = true;
 export default app;
