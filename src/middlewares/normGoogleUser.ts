@@ -2,8 +2,7 @@ import { Context, Next } from 'koa';
 import * as User from '@/services/user';
 import { StatusError } from '@/utils/error';
 import corail from '@/packages/corail';
-
-const OAUTH_REDIRECT_URL = import.meta.env.VITE_OAUTH_REDIRECT_URL;
+import { ENV } from '@/constants';
 
 export const { normalizeUser } = User;
 export const checkEmailExist = (userData: User.UserData) => {
@@ -29,7 +28,7 @@ export const normGoogleUser = async (ctx: Context, next: Next) => {
   if (corail.isFailed(result)) {
     const error = result.err as StatusError;
     ctx.redirect(
-      `${OAUTH_REDIRECT_URL}?status=failed&message='${error.message}'`
+      `${ENV.OAUTH_REDIRECT_URL}?status=failed&message='${error.message}'`
     );
     return;
   }
