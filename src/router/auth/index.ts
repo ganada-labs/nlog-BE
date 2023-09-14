@@ -2,10 +2,8 @@ import { type Context } from 'koa';
 import Router from '@koa/router';
 import * as Auth from '@/services/auth';
 import { checkRefreshCredential } from '@/middlewares/credential';
-
+import { ENV } from '@/constants';
 import GoogleAuth from './google';
-
-const DOMAIN = import.meta.env.VITE_DOMAIN;
 
 const auth = new Router({ prefix: '/auth' });
 /**
@@ -41,7 +39,7 @@ auth.get('/refresh', checkRefreshCredential, async (ctx: Context) => {
   ctx.status = 200;
   ctx.cookies.set('refresh_token', refreshToken, {
     httpOnly: true,
-    domain: DOMAIN,
+    domain: ENV.DOMAIN,
     maxAge: Auth.REFRESH_TOKEN_EXPIRES_IN * 1000,
     sameSite: 'strict',
     path: '/',
