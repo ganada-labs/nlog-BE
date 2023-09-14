@@ -23,7 +23,8 @@ GoogleAuth.get(
       httpOnly: true,
       domain: ENV.DOMAIN,
       maxAge: Auth.REFRESH_TOKEN_EXPIRES_IN * 1000,
-      sameSite: ENV.DEV_MODE ? 'lax' : 'strict',
+      sameSite: ENV.DEV_MODE ? 'none' : 'strict',
+      secure: true,
       path: '/',
     });
 
