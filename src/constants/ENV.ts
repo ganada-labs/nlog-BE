@@ -1,3 +1,4 @@
+export const DEV_MODE = import.meta.env.MODE === 'development';
 export const MONGO_HOST = import.meta.env.VITE_MONGO_HOST ?? 'localhost';
 export const MONGO_PORT = import.meta.env.VITE_MONGO_PORT ?? '27019';
 export const MONGO_DBNAME = import.meta.env.VITE_MONGO_DBNAME;

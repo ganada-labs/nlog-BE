@@ -41,7 +41,7 @@ auth.get('/refresh', checkRefreshCredential, async (ctx: Context) => {
     httpOnly: true,
     domain: ENV.DOMAIN,
     maxAge: Auth.REFRESH_TOKEN_EXPIRES_IN * 1000,
-    sameSite: 'strict',
+    sameSite: ENV.DEV_MODE ? 'lax' : 'strict',
     path: '/',
   });
   ctx.body = {
