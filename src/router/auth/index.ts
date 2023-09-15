@@ -39,7 +39,7 @@ auth.get('/refresh', checkRefreshCredential, async (ctx: Context) => {
   ctx.status = 200;
   ctx.cookies.set('refresh_token', refreshToken, {
     httpOnly: true,
-    domain: ENV.DOMAIN,
+    domain: `.${ENV.DOMAIN}`,
     maxAge: Auth.REFRESH_TOKEN_EXPIRES_IN * 1000,
     sameSite: ENV.DEV_MODE ? 'none' : 'strict',
     secure: true,
