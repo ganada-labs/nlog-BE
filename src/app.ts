@@ -44,6 +44,7 @@ app.use(
         'https://accounts.google.com/',
         'https://accounts.google.com',
         'http://localhost:3000',
+        'http://localhost:3000/',
       ];
       const domain = ctx.request.header.origin;
 
@@ -67,4 +68,5 @@ app.use(User.routes());
 app.use(Post.routes());
 app.use(router.allowedMethods());
 
+app.proxy = true;
 export default app;

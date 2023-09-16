@@ -1,8 +1,7 @@
 import mongoose from 'mongoose';
+import { ENV } from '@/constants';
 
-const MONGO_HOST = import.meta.env.VITE_MONGO_HOST ?? 'localhost';
-const MONGO_PORT = import.meta.env.VITE_MONGO_PORT ?? '27019';
-const MONGO_URL = `mongodb://${MONGO_HOST}:${MONGO_PORT}/nlog`;
+const MONGO_URL = `mongodb://${ENV.MONGO_HOST}:${ENV.MONGO_PORT}/${ENV.MONGO_DBNAME}`;
 
 export const connect = () => {
   mongoose

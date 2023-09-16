@@ -1,8 +1,7 @@
 import { createClient } from 'redis';
+import { ENV } from '@/constants';
 
-const REDIS_HOST = import.meta.env.VITE_REDIS_HOST ?? 'localhost';
-const REDIS_PORT = import.meta.env.VITE_REDIS_PORT ?? '6379';
-const REDIS_URL = `redis://${REDIS_HOST}:${REDIS_PORT}`;
+const REDIS_URL = `redis://${ENV.REDIS_HOST}:${ENV.REDIS_PORT}`;
 
 export const client = createClient({
   url: REDIS_URL,
