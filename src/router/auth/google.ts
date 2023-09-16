@@ -18,7 +18,7 @@ GoogleAuth.get(
   saveRefreshToken,
   async (ctx) => {
     const { refreshToken } = ctx;
-    console.log(ENV.DOMAIN, ENV.DEV_MODE ? 'none' : 'strict');
+
     ctx.cookies.set('refresh_token', refreshToken, {
       httpOnly: true,
       domain: ENV.DOMAIN,
